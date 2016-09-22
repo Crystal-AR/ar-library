@@ -1,5 +1,5 @@
 # AR Library Comps #
-Augmented Reality Library by Abha Ladha, Fred Roenn Stensaeth, Josh Pitkofsky, Sabastian Mugazambi, Simon Orlovsky and Thomas Redding
+Augmented Reality Library by Abha Laddha, Fred Roenn Stensaeth, Josh Pitkofsky, Sabastian Mugazambi, Simon Orlovsky and Thomas Redding
 - - - -
 # Best Practices #
 ### I. Committing, Pushing, and Branching ####
