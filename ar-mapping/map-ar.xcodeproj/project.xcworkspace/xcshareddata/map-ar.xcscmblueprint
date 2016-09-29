@@ -1,0 +1,28 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "D46C80CCC9FC2E91D527F4A6BF2C66CCFDB5699D",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "D46C80CCC9FC2E91D527F4A6BF2C66CCFDB5699D" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "3BA01C57-D7D3-4EED-B5D5-35E34E41ABDA",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "D46C80CCC9FC2E91D527F4A6BF2C66CCFDB5699D" : ".."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "map-ar",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "ar-mapping\/map-ar.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ar-comps\/ar-library.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D46C80CCC9FC2E91D527F4A6BF2C66CCFDB5699D"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/ar-comps\/ar-library.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "D46C80CCC9FC2E91D527F4A6BF2C66CCFDB5699D"
+    }
+  ]
+}
