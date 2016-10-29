@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TimingLogger;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
@@ -21,6 +25,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //init image
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_url);
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
 
         datapath = getFilesDir()+ "/tesseract/";
 
@@ -92,12 +104,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public class CharCoord {
+        public CharCoord(String ch, String x, String y, String X, String Y) {
+            c = ch.charAt(0);
+            x1 = Integer.parseInt(x);
+            y1 = Integer.parseInt(y);
+            x2 = Integer.parseInt(X);
+            y2 = Integer.parseInt(Y);
+        }
+        public char c;
+        int x1;
+        int y1;
+        int x2;
+        int y2;
+
+        @Override
+        public String toString() {
+            return String.valueOf(c) + " (" + String.valueOf(x1) + ", " + String.valueOf(y1) + ") (" + String.valueOf(x2) + ", " + String.valueOf(y2) + ")\n";
+        }
+    }
+
+    private CharCoord[] textCoordinatesToClass(String input) {
+        String[] lines = input.split("\n");
+        CharCoord[] rtn = new CharCoord[lines.length];
+        for (int i = 0; i < lines.length; ++i) {
+            String[] coords = lines[i].split(" ");
+            rtn[i] = new CharCoord(coords[0], coords[1], coords[2], coords[3], coords[4]);
+        }
+        Log.d("CharCoords", rtn[0].toString() );
+        return rtn;
+    }
 
 
+    CharCoord[] stuff;
     public void processImage(View view){
+
         mTess.setImage(image);
         long startTime = System.nanoTime();
         String OCRresult = mTess.getUTF8Text();
+
+
+        String coordinatesAsText = mTess.getBoxText(0);
+        stuff = textCoordinatesToClass(coordinatesAsText);
+
+
+        Bitmap b = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        Paint myPaint = new Paint();
+        myPaint.setColor(Color.rgb(255, 0, 0));
+        myPaint.setStrokeWidth(3);
+        c.drawRect(stuff[0].x1, stuff[0].y1, stuff[0].x2, stuff[0].y2, myPaint);
+
+
         long stopTime = System.nanoTime();
         Log.d("Time Taken", String.valueOf(stopTime - startTime));
         Log.d("OCR'ed Text:", OCRresult);
@@ -106,7 +164,8 @@ public class MainActivity extends AppCompatActivity {
         processURL(OCRresult);
     }
 
-    public void processURL(String string){;
+
+    public void processURL(String string){
         // separate input by spaces ( URLs don't have spaces )
         String [] parts = string.split("\\s+");
 
@@ -115,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
             URL url = new URL(item);
             // If possible then replace with anchor...
 
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-            startActivity(browserIntent);
+         //   Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+           // startActivity(browserIntent);
         } catch (MalformedURLException e) {
             // If there was an URL that was not it!...
             System.out.print( item + " " );
