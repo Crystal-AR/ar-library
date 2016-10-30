@@ -2,82 +2,103 @@
 <head>
 <script>
 var img = new Image();
-img.src = "table2.jpg";
+img.src = "perfect.jpg";
 var cvs, c;
 var imgData, oldData;
 onload = function() {
-    cvs = document.getElementById("cvs");
-    c = cvs.getContext("2d");
-    c.fillStyle = "white";
-    c.fillRect(0, 0, 500, 500);
-    c.drawImage(img, 5, 50, 490, 2432/3504*490);
-    imgData = c.getImageData(0, 0, 500, 500);
-    oldData = new Array(imgData.data.length);
-    for (var i = 0; i < imgData.data.length; ++i)
-        oldData[i] = imgData.data[i];
-    
-    for (var x = 1; x < 499; ++x) {
-        for (var y = 1; y < 499; ++y) {
-            var diff = 0;
-            diff += Math.abs(getMagnitudeAt(x-1, y) - getMagnitudeAt(x+1, y));
-            diff += Math.abs(getMagnitudeAt(x, y-1) - getMagnitudeAt(x, y+1));
-            diff += 0.5*Math.abs(getMagnitudeAt(x+1, y+1) - getMagnitudeAt(x-1, y-1));
-            diff += 0.5*Math.abs(getMagnitudeAt(x+1, y-1) - getMagnitudeAt(x-1, y+1));
-            diff = diff / 3;
-            var i = xyToIndex(x, y);
-            if (diff > 0.15) {
-                imgData.data[i] = 255;
-                imgData.data[i+1] = 255;
-                imgData.data[i+2] = 255;
-            }
-            else {
-                imgData.data[i] = 0;
-                imgData.data[i+1] = 0;
-                imgData.data[i+2] = 0;
-            }
-        }
+  cvs = document.getElementById("cvs");
+  c = cvs.getContext("2d");
+  c.fillStyle = "white";
+  c.fillRect(0, 0, 500, 500);
+  c.drawImage(img, 5, 50, 490, 2432/3504*490);
+
+  cvs2 = document.getElementById("cvs2");
+  f = cvs2.getContext("2d");
+  f.fillStyle = "white";
+  f.fillRect(0, 0, 500, 500);
+  f.drawImage(img, 5, 50, 490, 2432/3504*490);
+
+  imgData = c.getImageData(0, 0, 500, 500);
+  fImgData = f.getImageData(0, 0, 500, 500);
+
+  oldData = new Array(imgData.data.length);
+  for (var i = 0; i < imgData.data.length; ++i)
+    oldData[i] = imgData.data[i];
+
+  for (var x = 1; x < 499; ++x) {
+    for (var y = 1; y < 499; ++y) {
+      var diff = 0;
+      diff += Math.abs(getMagnitudeAt(x-1, y) - getMagnitudeAt(x+1, y));
+      diff += Math.abs(getMagnitudeAt(x, y-1) - getMagnitudeAt(x, y+1));
+      diff += 0.5*Math.abs(getMagnitudeAt(x+1, y+1) - getMagnitudeAt(x-1, y-1));
+      diff += 0.5*Math.abs(getMagnitudeAt(x+1, y-1) - getMagnitudeAt(x-1, y+1));
+      diff = diff / 3;
+      var i = xyToIndex(x, y);
+      if (diff > 0.15) {
+        imgData.data[i] = 255;
+        imgData.data[i+1] = 255;
+        imgData.data[i+2] = 255;
+      } else {
+        imgData.data[i] = 0;
+        imgData.data[i+1] = 0;
+        imgData.data[i+2] = 0;
+      }
     }
-    c.putImageData(imgData, 0, 0);
-    
-    var startX = 0;
-    var startY = 0;
-    var width = 500;
-    var height = 500;
-    var count = 0;
-    for (var x = startX; x < startX+width; ++x) {
-        for (var y = startY; y < startY+height; ++y) {
-            var i = xyToIndex(x, y);
-            if (imgData.data[i] == 255) {
-                // start building a line
-                console.log("foo");
-                var lst = buildLine(x, y, startX, startY, width, height);
-                c.strokeStyle = "red";
-                c.beginPath();
-                c.lineWidth = 2;
-                c.moveTo(lst[0][0], lst[0][1]);
-                for (var k = 0; k < lst.length; ++k)
-                    c.lineTo(lst[k][0], lst[k][1]);
-                c.stroke();
-                
-                var txt = "";
-                for (var i = 0; i < lst.length; ++i)
-                    txt += lst[i][0] + "," + lst[i][1] + "@"
-                console.log(txt);
-                ++count;
-                if (count > 1000)
-                    break;
-            }
+  }
+
+  var width = 500;
+  var height = 500;
+  for (var x = 0; x < width; ++x) {
+    for (var y = 0; y < height; ++y) {
+      var i = xyToIndex(x, y);
+      if (imgData.data[i] == 255) {
+        var rTally = 0;
+        var lTally = 0;
+        var uTally = 0;
+        var dTally = 0;
+        for (var n = 1;n<=10;++n){
+          var right = xyToIndex(x+n, y);
+          if(imgData.data[right] == 255){
+            rTally += 1;
+          }
+          var left = xyToIndex(x-n, y);
+          if(imgData.data[left] == 255){
+            lTally += 1;
+          }
+          var up = xyToIndex(x, y+n);
+          if(imgData.data[up]==255){
+            uTally += 1;
+          }
+          var down = xyToIndex(x, y-n);
+          if(imgData.data[down]==255){
+            dTally += 1;
+          }
         }
-        if (count > 1000)
-            break;
+        if (!((rTally > 8 && lTally > 8) || (uTally > 8 && dTally > 8))) {
+          if ((rTally > 8 && uTally > 8) ||
+             (rTally > 8 && dTally > 8) ||
+             (lTally > 8 && uTally > 8) ||
+             (lTally > 8 && dTally > 8)) {
+            var right = xyToIndex(x+1, y);
+            var left = xyToIndex(x-1, y);
+            var top = xyToIndex(x, y+1);
+            var down = xyToIndex(x, y-1);
+
+            imgData.data[i+1] = 0;
+            imgData.data[i+2] = 0;
+            fImgData.data[i+1] = 0;
+            fImgData.data[i+2] = 0;
+            fImgData.data[right+1] = 0;
+            fImgData.data[left+1] = 0;
+            fImgData.data[top+1] = 0;
+            fImgData.data[down+1] = 0;
+          }
+        }
+      }
     }
-    console.log(count);
-    
-//    c.putImageData(imgData, 0, 0);
-    
-    c.strokeStyle = "blue";
-    c.strokeRect(100, 220, 60, 60);
-    
+  }
+  c.putImageData(imgData, 0, 0);
+  f.putImageData(fImgData, 0, 0);
 }
 
 // http://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
@@ -88,7 +109,7 @@ function isEmpty(obj) {
     }
     return true;
 }
-    
+
 function grabRandomKey(obj) {
     for (var key in obj) {
         return key;
@@ -96,62 +117,10 @@ function grabRandomKey(obj) {
     return null;
 }
 
-function buildLine(x, y, startX, startY, width, height) {
-    var ind = xyToIndex(x, y);
-    var toColor = {};
-    var size = 1;
-    toColor[ind] = 1;
-    var count = 0;
-    var origX = x;
-    var origY = y;
-    var maxDist = 0;
-    var hist = [[x, y]];
-    while (!isEmpty(toColor)) {
-        ++count;
-        if (count > 300000)
-            return [[origX, origY], farthest];
-        var key = grabRandomKey(toColor);
-        delete toColor[key];
-        --size;
-        var lst = indexToXy(key);
-        x = lst[0];
-        y = lst[1];
-        
-        var dist = (x - origX) * (x - origX) + (y - origY) * (y - origY);
-        if (dist > maxDist) {
-            maxDist = dist;
-            hist.push([x, y]);
-        }
-        
-        for (var dx = -1; dx <= 1; ++dx) {
-            for (var dy = -1; dy <= 1; ++dy) {
-                var ind2 = xyToIndex(x+dx, y+dy);
-                if (x+dx < startX || x+dx > startX + width)
-                    continue;
-                if (y+dy < startY || y+dy > startY + height)
-                    continue;
-                if (imgData.data[ind2] == 255) {
-                    if (!(ind2 in toColor)) {
-                        toColor[ind2] = 1;
-                        ++size;
-                    }
-                }
-            }
-        }
-        imgData.data[key] = 0;
-    }
-    return hist;
-}
-
 function xyToIndex(x, y) {
     return 4 * (x + y * cvs.width);
 }
-    
-function indexToXy(index) {
-    index /= 4;
-    return [index % cvs.width, Math.floor(index / cvs.width)];
-}
-    
+
 /*
  * returns the magnitude (float between 0 and 1) of the given pixel
 */
@@ -164,6 +133,8 @@ function getMagnitudeAt(x, y) {
 </head>
 <body>
 <canvas id="cvs" width="500px" height="500px" style="border: 1px solid #ccc">
+</canvas>
+<canvas id="cvs2" width="500px" height="500px" style="border: 1px solid #ccc">
 </canvas>
 </body>
 </html>
