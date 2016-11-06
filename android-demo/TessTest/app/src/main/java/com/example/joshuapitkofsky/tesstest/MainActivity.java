@@ -1,6 +1,8 @@
 package com.example.joshuapitkofsky.tesstest;
+
 import java.net.URL;
 import java.net.MalformedURLException;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -9,16 +11,22 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
+import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TimingLogger;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
+
 import android.view.View;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     Bitmap image; //our image
     private TessBaseAPI mTess; //Tess API reference
     String datapath = ""; //path to folder containing language data file
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +57,9 @@ public class MainActivity extends AppCompatActivity {
         //init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
 
-        datapath = getFilesDir()+ "/tesseract/";
+        //image = BitmapFactory.decodeResource(getResources(), R.drawable.url);
+
+        datapath = getFilesDir() + "/tesseract/";
 
         //make sure training data has been copied
         checkFile(new File(datapath + "tessdata/"));
@@ -91,12 +103,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFile(File dir) {
         //directory does not exist, but we can successfully create it
-        if (!dir.exists()&& dir.mkdirs()){
+        if (!dir.exists() && dir.mkdirs()) {
             copyFile();
         }
         //The directory exists, but there is no data file in it
-        if(dir.exists()) {
-            String datafilepath = datapath+ "/tessdata/eng.traineddata";
+        if (dir.exists()) {
+            String datafilepath = datapath + "/tessdata/eng.traineddata";
             File datafile = new File(datafilepath);
             if (!datafile.exists()) {
                 copyFile();
@@ -112,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
             x2 = Integer.parseInt(X);
             y2 = Integer.parseInt(Y);
         }
+
         public char c;
         int x1;
         int y1;
@@ -131,30 +144,32 @@ public class MainActivity extends AppCompatActivity {
             String[] coords = lines[i].split(" ");
             rtn[i] = new CharCoord(coords[0], coords[1], coords[2], coords[3], coords[4]);
         }
-        Log.d("CharCoords", rtn[0].toString() );
+        Log.d("CharCoords", rtn[0].toString());
         return rtn;
     }
 
 
     CharCoord[] stuff;
-    public void processImage(View view){
+
+    public void processImage(View view) {
 
         mTess.setImage(image);
         long startTime = System.nanoTime();
         String OCRresult = mTess.getUTF8Text();
-
-
         String coordinatesAsText = mTess.getBoxText(0);
         stuff = textCoordinatesToClass(coordinatesAsText);
-
 
         Bitmap b = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         Paint myPaint = new Paint();
         myPaint.setColor(Color.rgb(255, 0, 0));
         myPaint.setStrokeWidth(3);
+
         c.drawRect(stuff[0].x1, stuff[0].y1, stuff[0].x2, stuff[0].y2, myPaint);
 
+        // todo allow user to take photo
+        // draw view with border around it tap on view to follow url. Bounding box around text in one color and around URL in another color
+        // real time
 
         long stopTime = System.nanoTime();
         Log.d("Time Taken", String.valueOf(stopTime - startTime));
@@ -165,27 +180,47 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void processURL(String string){
+    public void processURL(String string) {
         // separate input by spaces ( URLs don't have spaces )
-        String [] parts = string.split("\\s+");
+        String[] parts = string.split("\\s+");
 
         // Attempt to convert each item into an URL.
-        for( String item : parts ) try {
-            URL url = new URL(item);
-            // If possible then replace with anchor...
+        for (String item : parts)
+            try {
+                URL url = new URL(item);
+                // If possible then replace with anchor...
 
-         //   Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-           // startActivity(browserIntent);
-        } catch (MalformedURLException e) {
-            // If there was an URL that was not it!...
-            System.out.print( item + " " );
-        }
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+                startActivity(browserIntent);
+            } catch (MalformedURLException e) {
+                // If there was an URL that was not it!...
+                System.out.print(item + " ");
+            }
 
         System.out.println();
     }
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
+    public void dispatchTakePictureIntent(View view) {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ImageView mImageView = (ImageView) findViewById(R.id.imageView);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mImageView.setImageBitmap(imageBitmap);
+            image = imageBitmap;
+        }
+    }
+
+}
 
 
 
