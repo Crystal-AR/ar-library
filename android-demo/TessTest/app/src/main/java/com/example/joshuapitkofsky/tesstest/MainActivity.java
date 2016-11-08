@@ -1,8 +1,10 @@
 package com.example.joshuapitkofsky.tesstest;
 
+import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
@@ -14,7 +16,9 @@ import android.graphics.Paint;
 import android.graphics.Picture;
 import android.graphics.drawable.PictureDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 import android.graphics.Bitmap;
@@ -40,6 +46,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -60,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         //image = BitmapFactory.decodeResource(getResources(), R.drawable.url);
 
         datapath = getFilesDir() + "/tesseract/";
+        Log.d("Storage dir is", Environment.getExternalStorageDirectory().toString());
 
         //make sure training data has been copied
         checkFile(new File(datapath + "tessdata/"));
@@ -142,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         CharCoord[] rtn = new CharCoord[lines.length];
         for (int i = 0; i < lines.length; ++i) {
             String[] coords = lines[i].split(" ");
+            Log.d("lines", lines[i]);
             rtn[i] = new CharCoord(coords[0], coords[1], coords[2], coords[3], coords[4]);
         }
         Log.d("CharCoords", rtn[0].toString());
@@ -167,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
 
         c.drawRect(stuff[0].x1, stuff[0].y1, stuff[0].x2, stuff[0].y2, myPaint);
 
-        // todo allow user to take photo
+        // todo allow user to take photo - check
         // draw view with border around it tap on view to follow url. Bounding box around text in one color and around URL in another color
         // real time
 
@@ -200,28 +209,66 @@ public class MainActivity extends AppCompatActivity {
         System.out.println();
     }
 
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_TAKE_PHOTO = 1;
+
+    private Uri mImageUri;
 
     public void dispatchTakePictureIntent(View view) {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+
+
+        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+        File photo = null;
+        try {
+            // place where to store camera taken picture
+            photo = this.createTemporaryFile("picture", ".jpg");
+            photo.delete();
+        } catch (Exception e) {
+            Log.v("Hi", "Can't create file to take picture!");
+
+        }
+        mImageUri = Uri.fromFile(photo);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+        //start camera intent
+        this.startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+
+
+    }
+
+    private File createTemporaryFile(String part, String ext) throws Exception {
+        File tempDir = Environment.getExternalStorageDirectory();
+        tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+        return File.createTempFile(part, ext, tempDir);
+    }
+
+    public void grabImage(ImageView imageView) {
+        this.getContentResolver().notifyChange(mImageUri, null);
+        ContentResolver cr = this.getContentResolver();
+        Bitmap bitmap;
+        try {
+            bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
+            Log.d("height", String.valueOf(bitmap.getHeight()));
+            Log.d("width", String.valueOf(bitmap.getWidth()));
+            Bitmap thumb = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 8, bitmap.getHeight() / 8, false);
+
+            imageView.setImageBitmap(thumb);
+            image = thumb;
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
+            Log.d("ji", "Failed to load", e);
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        ImageView mImageView = (ImageView) findViewById(R.id.imageView);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            mImageView.setImageBitmap(imageBitmap);
-            image = imageBitmap;
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            ImageView mImageView = (ImageView) findViewById(R.id.imageView);
+            //... some code to inflate/create/find appropriate ImageView to place grabbed image
+            this.grabImage(mImageView);
         }
+        super.onActivityResult(requestCode, resultCode, intent);
     }
 
 }
-
-
-
-

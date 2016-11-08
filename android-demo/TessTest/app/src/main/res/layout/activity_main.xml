@@ -54,7 +54,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:background="#16e865"
+        android:background="#e81616"
         android:clickable="true"
         android:onClick="dispatchTakePictureIntent">
 
