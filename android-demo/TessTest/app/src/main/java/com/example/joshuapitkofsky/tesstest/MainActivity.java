@@ -186,6 +186,17 @@ public class MainActivity extends AppCompatActivity {
 
             int ourWidth = image.getWidth();
             int ourHeight = image.getHeight();
+            //TODO
+            // Take whitespace into consideration when finding the position of the button.
+            // Currently we ignore whitespace and therefore the buttons are slightly 'off'.
+//            int whitespaceHorizontal = 0;
+//            int whitespaceVertical = 0;
+//            if (ourHeight > ourWidth) {
+//                whitespaceHorizontal = ourHeight - ourWidth;
+//            } else {
+//                whitespaceVertical = ourWidth - ourHeight;
+//            }
+
             int scalarWidth = ourWidth / rl.getWidth();
             int scalarHeight = ourHeight / rl.getHeight();
             int scaledLeft = lst.get(i).left / scalarWidth;
