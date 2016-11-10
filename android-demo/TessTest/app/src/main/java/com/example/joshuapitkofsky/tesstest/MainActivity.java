@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //init image
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_url);
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
 
         //image = BitmapFactory.decodeResource(getResources(), R.drawable.url);
 
@@ -183,29 +183,39 @@ public class MainActivity extends AppCompatActivity {
             ImageView iv = (ImageView)findViewById(R.id.imageView);
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.ImageContainer);
             Button bt = new Button(this);
-            bt.setX(lst.get(i).left);
-            bt.setY(lst.get(i).height()*5);
+
+            int ourWidth = image.getWidth();
+            int ourHeight = image.getHeight();
+            int scalarWidth = ourWidth / rl.getWidth();
+            int scalarHeight = ourHeight / rl.getHeight();
+            int scaledLeft = lst.get(i).left / scalarWidth;
+            int scaledTop = lst.get(i).top / scalarHeight;
+
+            bt.setX(scaledLeft);
+            bt.setY(scaledTop);
             bt.setText(parts[i]);
+            Log.d("button x", String.valueOf(scaledLeft));
+            Log.d("button y", String.valueOf(scaledTop));
 
 
             rl.addView(bt);
 
             //iv.setImageResource(R.drawable.rect);
 
-            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((lst.get(i).width())*8, lst.get(i).height()*8);
-            params.leftMargin = lst.get(i).left;
-            params.topMargin = lst.get(i).top;
+//            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((lst.get(i).width())*8, lst.get(i).height()*8);
+//            params.leftMargin = lst.get(i).left;
+//            params.topMargin = lst.get(i).top;
 
 
-            Bitmap tempBitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.RGB_565);
-            Canvas tempCanvas = new Canvas(tempBitmap);
+//            Bitmap tempBitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.RGB_565);
+         //   Canvas tempCanvas = new Canvas(tempBitmap);
             //Draw the image bitmap into the cavas
-            Paint myPaint = new Paint();
-            myPaint.setColor(Color.rgb(255, 0, 0));
-            myPaint.setStrokeWidth(3);
-            tempCanvas.drawBitmap(image, 0, 0, null);
-            tempCanvas.drawRoundRect(new RectF(lst.get(i).left,lst.get(i).top,lst.get(i).width(),lst.get(i).height()), 2, 2, myPaint);
-            Log.d("HELLO:", String.valueOf(lst.get(i).left) + ", " + String.valueOf(lst.get(i).top) + ", " +  String.valueOf(lst.get(i).width())+ ", " + String.valueOf(lst.get(i).height()));
+            //Paint myPaint = new Paint();
+            //myPaint.setColor(Color.rgb(255, 0, 0));
+          //  myPaint.setStrokeWidth(3);
+      //      tempCanvas.drawBitmap(image, 0, 0, null);
+        //    tempCanvas.drawRoundRect(new RectF(lst.get(i).left,lst.get(i).top,lst.get(i).width(),lst.get(i).height()), 2, 2, myPaint);
+           // Log.d("HELLO:", String.valueOf(lst.get(i).left) + ", " + String.valueOf(lst.get(i).top) + ", " +  String.valueOf(lst.get(i).width())+ ", " + String.valueOf(lst.get(i).height()));
             // lst.get(4).left, lst.get(4).top, lst.get(4).width(), lst.get(4).height();
             // parts[4]
 
@@ -291,7 +301,9 @@ public class MainActivity extends AppCompatActivity {
             bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
             Log.d("height", String.valueOf(bitmap.getHeight()));
             Log.d("width", String.valueOf(bitmap.getWidth()));
-            Bitmap thumb = Bitmap.createScaledBitmap(bitmap, bitmap.getWidth() / 5, bitmap.getHeight() / 5, false);
+            //bitmap.getWidth() / 5
+
+            Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 400, (bitmap.getHeight() / bitmap.getWidth()) * 400, false);
 
             imageView.setImageBitmap(thumb);
             image = thumb;
