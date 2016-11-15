@@ -59,30 +59,6 @@ public class Library {
     Word[] words;
 
     /*
-     * basic class that collects a word and its position
-     */
-    public class Word {
-        public Word(String s, Rect rect) {
-            str = s;
-            x = rect.left;
-            y = rect.top;
-            width = rect.width();
-            height = rect.height();
-        }
-
-        public String str;
-        public int x;
-        public int y;
-        public int width;
-        public int height;
-
-        @Override
-        public String toString() {
-            return String.valueOf(str) + " (" + String.valueOf(x) + ", " + String.valueOf(y) + ") (" + String.valueOf(width) + ", " + String.valueOf(height) + ")\n";
-        }
-    }
-
-    /*
      * @param path - just put 'getFilesDir() + "/tesseract/"'
      */
     public Library(String path) {
@@ -90,6 +66,10 @@ public class Library {
         mTess = new TessBaseAPI();
         datapath = path;
         mTess.init(datapath, language);
+    }
+
+    public String getPrimitiveString() {
+        return OCRresult;
     }
 
     /*
@@ -125,7 +105,7 @@ public class Library {
     /*
      * Gives a list of urls from the previously processed image
      */
-    public URL[] processURL() {
+    public URL[] getURLs() {
         ArrayList<URL> urlsFound = new ArrayList<URL>();
         for (Word word : words) {
             URL url;

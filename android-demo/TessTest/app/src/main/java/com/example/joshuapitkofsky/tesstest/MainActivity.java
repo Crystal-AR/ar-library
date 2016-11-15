@@ -52,34 +52,27 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 public class MainActivity extends AppCompatActivity {
 
     Bitmap image; //our image
-    private TessBaseAPI mTess; //Tess API reference
     String datapath = ""; //path to folder containing language data file
-    ArrayList<Rect> lst = null;
+    Library ourLibrary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //init image
+        // init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
 
-        //image = BitmapFactory.decodeResource(getResources(), R.drawable.url);
-
-        datapath = getFilesDir() + "/tesseract/";
-        Log.d("Storage dir is", Environment.getExternalStorageDirectory().toString());
-
-        //make sure training data has been copied
+        // make sure training data has been copied
         checkFile(new File(datapath + "tessdata/"));
 
-        //init Tesseract API
-        String language = "eng";
-
-        mTess = new TessBaseAPI();
-        mTess.init(datapath, language);
+        datapath = getFilesDir() + "/tesseract/";
+        ourLibrary = new Library(datapath);
     }
 
 
@@ -127,108 +120,36 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class CharCoord {
-        public CharCoord(String ch, String x, String y, String X, String Y) {
-            c = ch.charAt(0);
-            x1 = Integer.parseInt(x);
-            y1 = Integer.parseInt(y);
-            x2 = Integer.parseInt(X);
-            y2 = Integer.parseInt(Y);
-        }
-
-        public char c;
-        int x1;
-        int y1;
-        int x2;
-        int y2;
-
-        @Override
-        public String toString() {
-            return String.valueOf(c) + " (" + String.valueOf(x1) + ", " + String.valueOf(y1) + ") (" + String.valueOf(x2) + ", " + String.valueOf(y2) + ")\n";
-        }
-    }
-
-    private CharCoord[] textCoordinatesToClass(String input) {
-        String[] lines = input.split("\n");
-        CharCoord[] rtn = new CharCoord[lines.length];
-        for (int i = 0; i < lines.length; ++i) {
-            String[] coords = lines[i].split(" ");
-            Log.d("lines", lines[i]);
-            rtn[i] = new CharCoord(coords[0], coords[1], coords[2], coords[3], coords[4]);
-        }
-        Log.d("CharCoords", rtn[0].toString());
-        return rtn;
-    }
-
-
-    CharCoord[] stuff;
-
     public void processImage(View view) {
 
-        mTess.setImage(image);
-        long startTime = System.nanoTime();
-        String OCRresult = mTess.getUTF8Text();
-        String coordinatesAsText = mTess.getBoxText(0);
+        ourLibrary.processImage(image);
 
-        Pixa p = mTess.getWords();
-        ArrayList<Rect> lst = p.getBoxRects();
-        String[] parts = OCRresult.split("\\s+");
-        for (int i = 0; i < parts.length; ++i) {
-            if (i >= lst.size()) {
-                Log.d("HELLO:", "Boop");
-                break;
-            }
-
+        Word[] words = ourLibrary.getWords();
+        for (int i = 0; i < words.length; ++i) {
             ImageView iv = (ImageView)findViewById(R.id.imageView);
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.ImageContainer);
             Button bt = new Button(this);
+            float imgWidth = (float) image.getWidth();
+            float imgHeight = (float) image.getHeight();
+            float viewWidth = (float) rl.getWidth();
+            float viewHeight = (float) rl.getHeight();
 
-            int ourWidth = image.getWidth();
-            int ourHeight = image.getHeight();
-            //TODO
-            // Take whitespace into consideration when finding the position of the button.
-            // Currently we ignore whitespace and therefore the buttons are slightly 'off'.
-//            int whitespaceHorizontal = 0;
-//            int whitespaceVertical = 0;
-//            if (ourHeight > ourWidth) {
-//                whitespaceHorizontal = ourHeight - ourWidth;
-//            } else {
-//                whitespaceVertical = ourWidth - ourHeight;
-//            }
+            float scale;
+            if (imgHeight/viewHeight > imgWidth/viewWidth)
+                scale = viewHeight / imgHeight;
+            else
+                scale = viewWidth / imgWidth;
 
-            int scalarWidth = ourWidth / rl.getWidth();
-            int scalarHeight = ourHeight / rl.getHeight();
-            int scaledLeft = lst.get(i).left / scalarWidth;
-            int scaledTop = lst.get(i).top / scalarHeight;
+            float xpos = (float) (words[i].x - imgWidth / 2.0);
+            float ypos = (float) (words[i].y - imgHeight / 2.0);
+            xpos = (float) (xpos * scale + viewWidth / 2.0);
+            ypos = (float) (ypos * scale + viewHeight / 2.0);
 
-            bt.setX(scaledLeft);
-            bt.setY(scaledTop);
-            bt.setText(parts[i]);
-            Log.d("button x", String.valueOf(scaledLeft));
-            Log.d("button y", String.valueOf(scaledTop));
-
+            bt.setX(xpos);
+            bt.setY(ypos);
+            bt.setText(words[i].str);
 
             rl.addView(bt);
-
-            //iv.setImageResource(R.drawable.rect);
-
-//            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams((lst.get(i).width())*8, lst.get(i).height()*8);
-//            params.leftMargin = lst.get(i).left;
-//            params.topMargin = lst.get(i).top;
-
-
-//            Bitmap tempBitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.RGB_565);
-         //   Canvas tempCanvas = new Canvas(tempBitmap);
-            //Draw the image bitmap into the cavas
-            //Paint myPaint = new Paint();
-            //myPaint.setColor(Color.rgb(255, 0, 0));
-          //  myPaint.setStrokeWidth(3);
-      //      tempCanvas.drawBitmap(image, 0, 0, null);
-        //    tempCanvas.drawRoundRect(new RectF(lst.get(i).left,lst.get(i).top,lst.get(i).width(),lst.get(i).height()), 2, 2, myPaint);
-           // Log.d("HELLO:", String.valueOf(lst.get(i).left) + ", " + String.valueOf(lst.get(i).top) + ", " +  String.valueOf(lst.get(i).width())+ ", " + String.valueOf(lst.get(i).height()));
-            // lst.get(4).left, lst.get(4).top, lst.get(4).width(), lst.get(4).height();
-            // parts[4]
-
         }
 
 
@@ -237,36 +158,20 @@ public class MainActivity extends AppCompatActivity {
         // draw view with border around it tap on view to follow url. Bounding box around text in one color and around URL in another color
         //
         // real time
-
-        long stopTime = System.nanoTime();
-        Log.d("Time Taken", String.valueOf(stopTime - startTime));
-        Log.d("OCR'ed Text:", OCRresult);
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
-        OCRTextView.setText(OCRresult);
-        //processURL(OCRresult);
-
-
+        OCRTextView.setText(ourLibrary.getPrimitiveString());
+        openURLs();
     }
 
-    public void processURL(String string) {
+    public void openURLs() {
         // separate input by spaces ( URLs don't have spaces )
-        String[] parts = string.split("\\s+");
+        URL[] urls = ourLibrary.getURLs();
 
         // Attempt to convert each item into an URL.
-        for (String item : parts)
-            try {
-                Log.d("ITEM",item);
-                URL url = new URL(item);
-                // If possible then replace with anchor...
-
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-                startActivity(browserIntent);
-            } catch (MalformedURLException e) {
-                // If there was an URL that was not it!...
-                System.out.print(item + " ");
-            }
-
-        System.out.println();
+        for (URL url : urls) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+            startActivity(browserIntent);
+        }
     }
 
     static final int REQUEST_TAKE_PHOTO = 1;
