@@ -52,7 +52,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.widget.Toast;
 
-
 public class MainActivity extends AppCompatActivity {
 
     Bitmap image; //our image
