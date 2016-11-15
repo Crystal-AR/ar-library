@@ -53,55 +53,94 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.Toast;
 
 public class Library {
-    private TessBaseAPI mTess; //Tess API reference
-    String datapath = ""; //path to folder containing language data file
-    ArrayList<Rect> lst = null;
-    String OCRresult;
+    private TessBaseAPI mTess;    //Tess API reference
+    private String datapath = ""; //path to folder containing language data file
+    private String OCRresult;     // result from processImage
+    Word[] words;
 
-    Library(String path) {
+    /*
+     * basic class that collects a word and its position
+     */
+    public class Word {
+        public Word(String s, Rect rect) {
+            str = s;
+            x = rect.left;
+            y = rect.top;
+            width = rect.width();
+            height = rect.height();
+        }
+
+        public String str;
+        public int x;
+        public int y;
+        public int width;
+        public int height;
+
+        @Override
+        public String toString() {
+            return String.valueOf(str) + " (" + String.valueOf(x) + ", " + String.valueOf(y) + ") (" + String.valueOf(width) + ", " + String.valueOf(height) + ")\n";
+        }
+    }
+
+    /*
+     * @param path - just put 'getFilesDir() + "/tesseract/"'
+     */
+    public Library(String path) {
         String language = "eng";
         mTess = new TessBaseAPI();
         datapath = path;
         mTess.init(datapath, language);
     }
 
-    public class Word {
-        public Word(String s, Rect rect) {
-            str = s;
-            x = rect.left;
-            y = rect.top;
-            w = rect.width();
-            h = rect.height();
-        }
-
-        public String str;
-        public int x;
-        public int y;
-        public int w;
-        public int h;
-
-        @Override
-        public String toString() {
-            return String.valueOf(str) + " (" + String.valueOf(x) + ", " + String.valueOf(y) + ") (" + String.valueOf(w) + ", " + String.valueOf(h) + ")\n";
-        }
-    }
-
+    /*
+     * Given an image, this runs Tesseract's main algorithm on it. You MUST run this before calling
+     * any other public methods.
+     * @param image - image to analyze
+     */
     public void processImage(Bitmap image) {
         mTess.setImage(image);
         long startTime = System.nanoTime();
         OCRresult = mTess.getUTF8Text();
-    }
 
-    public Word[] getWordCoordinates() {
         Pixa p = mTess.getWords();
         ArrayList<Rect> lst = p.getBoxRects();
         String[] parts = OCRresult.split("\\s+");
-        Word[] rtn = new Word[lst.size()];
+        words = new Word[lst.size()];
         for (int i = 0; i < lst.size(); ++i) {
             if (i >= parts.length)
                 break;
-            rtn[i] = new Word(parts[i], lst.get(i));
+            words[i] = new Word(parts[i], lst.get(i));
         }
+    }
+
+    /*
+     * Returns a list of Word classes from the previously processed image
+     */
+    public Word[] getWords() {
+        Word[] arrayCopy = new Word[words.length];
+        System.arraycopy(words, 0, arrayCopy, 0, words.length);
+        return arrayCopy;
+    }
+
+    /*
+     * Gives a list of urls from the previously processed image
+     */
+    public URL[] processURL() {
+        ArrayList<URL> urlsFound = new ArrayList<URL>();
+        for (Word word : words) {
+            URL url;
+            try {
+                url = new URL(word.str);
+                urlsFound.add(url);
+            } catch (MalformedURLException e) {
+                // skip this
+            }
+        }
+
+        URL[] rtn = new URL[urlsFound.size()];
+        for (int i = 0; i < urlsFound.size(); ++i)
+            rtn[i] = urlsFound.get(i);
+
         return rtn;
     }
 }
