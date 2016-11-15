@@ -55,8 +55,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:background="#e81616"
-        android:clickable="true"
-        android:onClick="dispatchTakePictureIntent">
+        android:onClick="dispatchTakePictureIntent"
+        android:clickable="true">
 
         <TextView
             android:id="@+id/takePicture"

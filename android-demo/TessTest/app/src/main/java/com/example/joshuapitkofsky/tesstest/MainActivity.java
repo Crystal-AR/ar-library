@@ -4,9 +4,11 @@ import java.net.URI;
 import java.net.URL;
 import java.net.MalformedURLException;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -44,7 +46,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -74,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
         datapath = getFilesDir() + "/tesseract/";
         ourLibrary = new Library(datapath);
     }
-
 
     private void copyFile() {
         try {
@@ -121,6 +121,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void processImage(View view) {
+        ProgressDialog mDialog = new ProgressDialog(this);
+        mDialog.setMessage("Processing Image...");
+        mDialog.setCancelable(false);
+        mDialog.show();
 
         ourLibrary.processImage(image);
 
@@ -152,14 +156,11 @@ public class MainActivity extends AppCompatActivity {
             rl.addView(bt);
         }
 
-
-
-        // todo allow user to take photo - check
-        // draw view with border around it tap on view to follow url. Bounding box around text in one color and around URL in another color
-        //
-        // real time
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
         OCRTextView.setText(ourLibrary.getPrimitiveString());
+
+        mDialog.dismiss();
+
         openURLs();
     }
 
@@ -179,29 +180,29 @@ public class MainActivity extends AppCompatActivity {
     private Uri mImageUri;
 
     public void dispatchTakePictureIntent(View view) {
+        Context context = this;
+        PackageManager pm = context.getPackageManager();
 
-
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        File photo = null;
-        try {
-            // place where to store camera taken picture
-            photo = this.createTemporaryFile("picture", ".jpg");
-            photo.delete();
-        } catch (Exception e) {
-            Log.v("Hi", "Can't create file to take picture!");
-
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            File photo = null;
+            try {
+                // place where to store camera taken picture
+                photo = this.createTemporaryFile("picture", ".jpg");
+                photo.delete();
+            } catch (Exception e) {
+                Log.v("Error", "Can't create file to take picture!");
+            }
+            mImageUri = Uri.fromFile(photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            //start camera intent
+            this.startActivityForResult(intent, REQUEST_TAKE_PHOTO);
         }
-        mImageUri = Uri.fromFile(photo);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
-        //start camera intent
-        this.startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-
-
     }
 
     private File createTemporaryFile(String part, String ext) throws Exception {
-        File tempDir = Environment.getExternalStorageDirectory();
-        tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
+        File externalStoradeDir = Environment.getExternalStorageDirectory();
+        File tempDir = new File(externalStoradeDir.getAbsolutePath() + "/.temp/");
         if (!tempDir.exists()) {
             tempDir.mkdirs();
         }
@@ -214,9 +215,6 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap;
         try {
             bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
-            Log.d("height", String.valueOf(bitmap.getHeight()));
-            Log.d("width", String.valueOf(bitmap.getWidth()));
-            //bitmap.getWidth() / 5
 
             Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 400, (bitmap.getHeight() / bitmap.getWidth()) * 400, false);
 
@@ -224,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             image = thumb;
         } catch (Exception e) {
             Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
-            Log.d("ji", "Failed to load", e);
+            Log.d("Error", "Failed to load", e);
         }
     }
 
