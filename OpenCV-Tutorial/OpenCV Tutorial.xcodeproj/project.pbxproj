@@ -7,11 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		363DA0BF15C097AC00347AB2 /* FeatureDetectionSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 363DA0BE15C097AC00347AB2 /* FeatureDetectionSample.cpp */; };
 		369F2C2415C1A3C70032BD08 /* ObjectTrackingClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 369F2C2315C1A3C70032BD08 /* ObjectTrackingClass.cpp */; };
 		369F2C2815C1A3F00032BD08 /* ObjectTrackingSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 369F2C2715C1A3EF0032BD08 /* ObjectTrackingSample.cpp */; };
 		369F2C2A15C1A4950032BD08 /* ObjectTrackingSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 369F2C2915C1A4950032BD08 /* ObjectTrackingSampleIcon.png */; };
-		369F2C2C15C1A5290032BD08 /* FeatureDetectionSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 369F2C2B15C1A5290032BD08 /* FeatureDetectionSampleIcon.png */; };
 		369F2C2F15C1AEE50032BD08 /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 369F2C2E15C1AEE50032BD08 /* Globals.cpp */; };
 		8A00096F15AD6DF9001EA42D /* OptionCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A00096E15AD6DF9001EA42D /* OptionCell.mm */; };
 		8A00097315AE0F0A001EA42D /* OptionsTableView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A00097215AE0F09001EA42D /* OptionsTableView.mm */; };
@@ -30,23 +28,15 @@
 		8A4388DA1597171900027D3C /* EdgeDetectionSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4388D91597171900027D3C /* EdgeDetectionSample.cpp */; };
 		8A4388DC1597189A00027D3C /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A4388741595BC4F00027D3C /* main.mm */; };
 		8A4388DD159718B100027D3C /* SampleBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A43888B1595C1F000027D3C /* SampleBase.cpp */; };
-		8A4388DE159718B100027D3C /* ContourDetectionSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4388911595CAF700027D3C /* ContourDetectionSample.cpp */; };
 		8A4388E115971FF200027D3C /* EdgeDetectionSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A4388E015971FF200027D3C /* EdgeDetectionSampleIcon.png */; };
 		8A4388E315971FFE00027D3C /* EdgeDetectionSampleIcon~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A4388E215971FFE00027D3C /* EdgeDetectionSampleIcon~ipad.png */; };
 		8A4388E81597B7BB00027D3C /* UIImage2OpenCV.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A4388E71597B7BB00027D3C /* UIImage2OpenCV.mm */; };
-		8A4388EB1597BD9D00027D3C /* ContourDetectionSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A4388E91597BD9D00027D3C /* ContourDetectionSampleIcon.png */; };
-		8A4388EC1597BD9D00027D3C /* ContourDetectionSampleIcon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A4388EA1597BD9D00027D3C /* ContourDetectionSampleIcon@2x.png */; };
-		8A4A123D15F68B680096D272 /* DrawingCanvas.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4A123C15F68B680096D272 /* DrawingCanvas.cpp */; };
-		8A4C5D7515E2CAEA008887F0 /* ROFSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C5D7015E2CAEA008887F0 /* ROFSample.cpp */; };
-		8A4C5D7615E2CAEA008887F0 /* ROFSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A4C5D7215E2CAEA008887F0 /* ROFSampleIcon.png */; };
-		8A4C5D7715E2CAEA008887F0 /* totalvariation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A4C5D7315E2CAEA008887F0 /* totalvariation.cpp */; };
 		8A64E5951A7A711200319DCB /* CameraCalibrationSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A64E5931A7A711200319DCB /* CameraCalibrationSample.cpp */; };
 		8A64E5DA1A7A867400319DCB /* CameraCalibrationAlgorithm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A64E5D81A7A867400319DCB /* CameraCalibrationAlgorithm.cpp */; };
 		8A66F70A15DA3E2600EF1959 /* DefaultSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A66F70815DA3E2600EF1959 /* DefaultSampleIcon.png */; };
 		8A66F70B15DA3E2600EF1959 /* DefaultSampleIcon~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A66F70915DA3E2600EF1959 /* DefaultSampleIcon~ipad.png */; };
 		8A66F71215DA535C00EF1959 /* SampleFacade.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A66F71115DA535C00EF1959 /* SampleFacade.mm */; };
 		8A66F71515DA85BA00EF1959 /* VideoTrackingSampleIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 8A66F71415DA85BA00EF1959 /* VideoTrackingSampleIcon.png */; };
-		8A6E0BD81614946100C1D644 /* FeatureDetectionClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A6E0BD61614946100C1D644 /* FeatureDetectionClass.cpp */; };
 		8A723FC81599B6EE008C72DB /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A723FC71599B6EE008C72DB /* AVFoundation.framework */; };
 		8A723FCB1599B6F2008C72DB /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A723FC91599B6F2008C72DB /* GLKit.framework */; };
 		8A723FCC1599B6F2008C72DB /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A723FCA1599B6F2008C72DB /* OpenGLES.framework */; };
@@ -55,7 +45,6 @@
 		8A723FD21599B700008C72DB /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A723FD11599B700008C72DB /* QuartzCore.framework */; };
 		8A723FD41599B70B008C72DB /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A723FD31599B70B008C72DB /* CoreVideo.framework */; };
 		8A723FDB1599BB74008C72DB /* VideoViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A723FDA1599BB74008C72DB /* VideoViewController.mm */; };
-		8A79349315A9A3F70043BE99 /* ImageFiltersSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A79349215A9A3F70043BE99 /* ImageFiltersSample.cpp */; };
 		8A79349F15A9ADA20043BE99 /* BooleanTableViewCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A79349E15A9ADA20043BE99 /* BooleanTableViewCell.mm */; };
 		8A7934A815AB47070043BE99 /* SampleOptionsTableViewDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A7934A715AB47060043BE99 /* SampleOptionsTableViewDelegate.mm */; };
 		8A7934AB15AB48C80043BE99 /* NSString+StdString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A7934AA15AB48C80043BE99 /* NSString+StdString.mm */; };
@@ -85,7 +74,6 @@
 		8AB6D03B15B5556D0029641C /* switchCamera@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AB6D03A15B5556D0029641C /* switchCamera@2x.png */; };
 		8AB6D03D15B5585D0029641C /* photos_polaroid.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AB6D03C15B5585D0029641C /* photos_polaroid.png */; };
 		8AB6D03F15B5588E0029641C /* photos_polaroid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8AB6D03E15B5588D0029641C /* photos_polaroid@2x.png */; };
-		8AB6D04315B856850029641C /* CartoonFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AB6D04215B856850029641C /* CartoonFilter.cpp */; };
 		8AB6D04515B9969D0029641C /* Twitter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AB6D04415B9969C0029641C /* Twitter.framework */; };
 		8AB6D04815B99B5B0029641C /* BaseSampleViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8AB6D04715B99B5A0029641C /* BaseSampleViewController.mm */; };
 		8AB6D05015BDEB2F0029641C /* VideoTracking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AB6D04F15BDEB2F0029641C /* VideoTracking.cpp */; };
@@ -104,14 +92,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		363DA0BD15C097A500347AB2 /* FeatureDetectionSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeatureDetectionSample.h; sourceTree = "<group>"; };
-		363DA0BE15C097AC00347AB2 /* FeatureDetectionSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeatureDetectionSample.cpp; sourceTree = "<group>"; };
 		369F2C2315C1A3C70032BD08 /* ObjectTrackingClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectTrackingClass.cpp; sourceTree = "<group>"; };
 		369F2C2515C1A3D40032BD08 /* ObjectTrackingClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectTrackingClass.h; sourceTree = "<group>"; };
 		369F2C2615C1A3E20032BD08 /* ObjectTrackingSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectTrackingSample.h; sourceTree = "<group>"; };
 		369F2C2715C1A3EF0032BD08 /* ObjectTrackingSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectTrackingSample.cpp; sourceTree = "<group>"; };
 		369F2C2915C1A4950032BD08 /* ObjectTrackingSampleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ObjectTrackingSampleIcon.png; sourceTree = "<group>"; };
-		369F2C2B15C1A5290032BD08 /* FeatureDetectionSampleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FeatureDetectionSampleIcon.png; sourceTree = "<group>"; };
 		369F2C2D15C1AEDD0032BD08 /* Globals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
 		369F2C2E15C1AEE50032BD08 /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Globals.cpp; sourceTree = "<group>"; };
 		8A00096D15AD6DF8001EA42D /* OptionCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionCell.h; sourceTree = "<group>"; };
@@ -127,8 +112,6 @@
 		8A4388761595BC4F00027D3C /* OpenCV Tutorial-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenCV Tutorial-Prefix.pch"; sourceTree = "<group>"; };
 		8A4388891595BCC400027D3C /* SampleBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleBase.h; sourceTree = "<group>"; };
 		8A43888B1595C1F000027D3C /* SampleBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SampleBase.cpp; sourceTree = "<group>"; };
-		8A4388911595CAF700027D3C /* ContourDetectionSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContourDetectionSample.cpp; sourceTree = "<group>"; };
-		8A4388931595CB0300027D3C /* ContourDetectionSample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContourDetectionSample.h; sourceTree = "<group>"; };
 		8A4388981595DE5800027D3C /* OpenCV Tutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "OpenCV Tutorial.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8A4388A61595DE5800027D3C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8A4388A71595DE5800027D3C /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -148,16 +131,7 @@
 		8A4388E215971FFE00027D3C /* EdgeDetectionSampleIcon~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "EdgeDetectionSampleIcon~ipad.png"; sourceTree = "<group>"; };
 		8A4388E61597B75400027D3C /* UIImage2OpenCV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIImage2OpenCV.h; sourceTree = "<group>"; };
 		8A4388E71597B7BB00027D3C /* UIImage2OpenCV.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIImage2OpenCV.mm; sourceTree = "<group>"; };
-		8A4388E91597BD9D00027D3C /* ContourDetectionSampleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ContourDetectionSampleIcon.png; sourceTree = "<group>"; };
-		8A4388EA1597BD9D00027D3C /* ContourDetectionSampleIcon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ContourDetectionSampleIcon@2x.png"; sourceTree = "<group>"; };
 		8A4388F01597C49B00027D3C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		8A4A123B15F68B5F0096D272 /* DrawingCanvas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingCanvas.h; sourceTree = "<group>"; };
-		8A4A123C15F68B680096D272 /* DrawingCanvas.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingCanvas.cpp; sourceTree = "<group>"; };
-		8A4C5D7015E2CAEA008887F0 /* ROFSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ROFSample.cpp; sourceTree = "<group>"; };
-		8A4C5D7115E2CAEA008887F0 /* ROFSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ROFSample.h; sourceTree = "<group>"; };
-		8A4C5D7215E2CAEA008887F0 /* ROFSampleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ROFSampleIcon.png; sourceTree = "<group>"; };
-		8A4C5D7315E2CAEA008887F0 /* totalvariation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = totalvariation.cpp; sourceTree = "<group>"; };
-		8A4C5D7415E2CAEA008887F0 /* totalvariation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = totalvariation.h; sourceTree = "<group>"; };
 		8A64E5931A7A711200319DCB /* CameraCalibrationSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraCalibrationSample.cpp; sourceTree = "<group>"; };
 		8A64E5941A7A711200319DCB /* CameraCalibrationSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraCalibrationSample.h; sourceTree = "<group>"; };
 		8A64E5D81A7A867400319DCB /* CameraCalibrationAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraCalibrationAlgorithm.cpp; sourceTree = "<group>"; };
@@ -167,8 +141,6 @@
 		8A66F71015DA535C00EF1959 /* SampleFacade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleFacade.h; sourceTree = "<group>"; };
 		8A66F71115DA535C00EF1959 /* SampleFacade.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SampleFacade.mm; sourceTree = "<group>"; };
 		8A66F71415DA85BA00EF1959 /* VideoTrackingSampleIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = VideoTrackingSampleIcon.png; sourceTree = "<group>"; };
-		8A6E0BD61614946100C1D644 /* FeatureDetectionClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeatureDetectionClass.cpp; sourceTree = "<group>"; };
-		8A6E0BD71614946100C1D644 /* FeatureDetectionClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureDetectionClass.h; sourceTree = "<group>"; };
 		8A723FC71599B6EE008C72DB /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8A723FC91599B6F2008C72DB /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
 		8A723FCA1599B6F2008C72DB /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
@@ -178,8 +150,6 @@
 		8A723FD31599B70B008C72DB /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		8A723FD91599BB74008C72DB /* VideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoViewController.h; sourceTree = "<group>"; };
 		8A723FDA1599BB74008C72DB /* VideoViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VideoViewController.mm; sourceTree = "<group>"; };
-		8A79349015A9A3EA0043BE99 /* ImageFiltersSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFiltersSample.h; sourceTree = "<group>"; };
-		8A79349215A9A3F70043BE99 /* ImageFiltersSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFiltersSample.cpp; sourceTree = "<group>"; };
 		8A79349D15A9ADA20043BE99 /* BooleanTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanTableViewCell.h; sourceTree = "<group>"; };
 		8A79349E15A9ADA20043BE99 /* BooleanTableViewCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BooleanTableViewCell.mm; sourceTree = "<group>"; };
 		8A7934A615AB47060043BE99 /* SampleOptionsTableViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SampleOptionsTableViewDelegate.h; sourceTree = "<group>"; };
@@ -217,8 +187,6 @@
 		8AB6D03A15B5556D0029641C /* switchCamera@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "switchCamera@2x.png"; sourceTree = "<group>"; };
 		8AB6D03C15B5585D0029641C /* photos_polaroid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = photos_polaroid.png; sourceTree = "<group>"; };
 		8AB6D03E15B5588D0029641C /* photos_polaroid@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "photos_polaroid@2x.png"; sourceTree = "<group>"; };
-		8AB6D04115B8567C0029641C /* CartoonFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CartoonFilter.h; sourceTree = "<group>"; };
-		8AB6D04215B856850029641C /* CartoonFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CartoonFilter.cpp; sourceTree = "<group>"; };
 		8AB6D04415B9969C0029641C /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
 		8AB6D04615B99B590029641C /* BaseSampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseSampleViewController.h; sourceTree = "<group>"; };
 		8AB6D04715B99B5A0029641C /* BaseSampleViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BaseSampleViewController.mm; sourceTree = "<group>"; };
@@ -265,18 +233,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		363DA0B615C0970200347AB2 /* FeatureDetection */ = {
-			isa = PBXGroup;
-			children = (
-				8A6E0BD61614946100C1D644 /* FeatureDetectionClass.cpp */,
-				8A6E0BD71614946100C1D644 /* FeatureDetectionClass.h */,
-				363DA0BE15C097AC00347AB2 /* FeatureDetectionSample.cpp */,
-				363DA0BD15C097A500347AB2 /* FeatureDetectionSample.h */,
-				369F2C2B15C1A5290032BD08 /* FeatureDetectionSampleIcon.png */,
-			);
-			name = FeatureDetection;
-			sourceTree = "<group>";
-		};
 		369F2C2215C1A2AD0032BD08 /* ObjectTracking */ = {
 			isa = PBXGroup;
 			children = (
@@ -365,14 +321,8 @@
 			isa = PBXGroup;
 			children = (
 				8A64E5921A7A70F500319DCB /* Camera Calibration */,
-				8AB6D04015B856010029641C /* CartoonFilter */,
-				8A4388E41597B6E500027D3C /* Contour Detection */,
-				8A4A123915F68B460096D272 /* DrawingCanvas */,
 				8A4388DF15971FE000027D3C /* Edge Detection */,
-				363DA0B615C0970200347AB2 /* FeatureDetection */,
-				8A79349415A9A3FB0043BE99 /* Image Filters */,
 				369F2C2215C1A2AD0032BD08 /* ObjectTracking */,
-				8A4C5D7915E2CAF1008887F0 /* ROFSample */,
 				8A7934BB15AB5BD40043BE99 /* SampleBase */,
 				8AB6D05115BDEB320029641C /* Video Tracking */,
 			);
@@ -417,38 +367,6 @@
 			name = "Edge Detection";
 			sourceTree = "<group>";
 		};
-		8A4388E41597B6E500027D3C /* Contour Detection */ = {
-			isa = PBXGroup;
-			children = (
-				8A4388911595CAF700027D3C /* ContourDetectionSample.cpp */,
-				8A4388931595CB0300027D3C /* ContourDetectionSample.h */,
-				8A4388E91597BD9D00027D3C /* ContourDetectionSampleIcon.png */,
-				8A4388EA1597BD9D00027D3C /* ContourDetectionSampleIcon@2x.png */,
-			);
-			name = "Contour Detection";
-			sourceTree = "<group>";
-		};
-		8A4A123915F68B460096D272 /* DrawingCanvas */ = {
-			isa = PBXGroup;
-			children = (
-				8A4A123C15F68B680096D272 /* DrawingCanvas.cpp */,
-				8A4A123B15F68B5F0096D272 /* DrawingCanvas.h */,
-			);
-			name = DrawingCanvas;
-			sourceTree = "<group>";
-		};
-		8A4C5D7915E2CAF1008887F0 /* ROFSample */ = {
-			isa = PBXGroup;
-			children = (
-				8A4C5D7015E2CAEA008887F0 /* ROFSample.cpp */,
-				8A4C5D7115E2CAEA008887F0 /* ROFSample.h */,
-				8A4C5D7215E2CAEA008887F0 /* ROFSampleIcon.png */,
-				8A4C5D7315E2CAEA008887F0 /* totalvariation.cpp */,
-				8A4C5D7415E2CAEA008887F0 /* totalvariation.h */,
-			);
-			name = ROFSample;
-			sourceTree = "<group>";
-		};
 		8A64E5921A7A70F500319DCB /* Camera Calibration */ = {
 			isa = PBXGroup;
 			children = (
@@ -467,15 +385,6 @@
 				8A4388A91595DE5800027D3C /* MainStoryboard_iPhone.storyboard */,
 			);
 			name = Storyboards;
-			sourceTree = "<group>";
-		};
-		8A79349415A9A3FB0043BE99 /* Image Filters */ = {
-			isa = PBXGroup;
-			children = (
-				8A79349215A9A3F70043BE99 /* ImageFiltersSample.cpp */,
-				8A79349015A9A3EA0043BE99 /* ImageFiltersSample.h */,
-			);
-			name = "Image Filters";
 			sourceTree = "<group>";
 		};
 		8A7934BB15AB5BD40043BE99 /* SampleBase */ = {
@@ -546,15 +455,6 @@
 				8A723FDA1599BB74008C72DB /* VideoViewController.mm */,
 			);
 			name = "View Controllers";
-			sourceTree = "<group>";
-		};
-		8AB6D04015B856010029641C /* CartoonFilter */ = {
-			isa = PBXGroup;
-			children = (
-				8AB6D04215B856850029641C /* CartoonFilter.cpp */,
-				8AB6D04115B8567C0029641C /* CartoonFilter.h */,
-			);
-			name = CartoonFilter;
 			sourceTree = "<group>";
 		};
 		8AB6D05115BDEB320029641C /* Video Tracking */ = {
@@ -653,8 +553,6 @@
 				8A4388D81596E11700027D3C /* Icon-72@2x.png in Resources */,
 				8A4388E115971FF200027D3C /* EdgeDetectionSampleIcon.png in Resources */,
 				8A4388E315971FFE00027D3C /* EdgeDetectionSampleIcon~ipad.png in Resources */,
-				8A4388EB1597BD9D00027D3C /* ContourDetectionSampleIcon.png in Resources */,
-				8A4388EC1597BD9D00027D3C /* ContourDetectionSampleIcon@2x.png in Resources */,
 				8AB993B815A3548A00D6AB1D /* Default.png in Resources */,
 				8AB993BA15A3549200D6AB1D /* Default@2x.png in Resources */,
 				8AB993BC15A3549F00D6AB1D /* Default-Portrait~ipad.png in Resources */,
@@ -682,13 +580,11 @@
 				8AB6D03D15B5585D0029641C /* photos_polaroid.png in Resources */,
 				8AB6D03F15B5588E0029641C /* photos_polaroid@2x.png in Resources */,
 				369F2C2A15C1A4950032BD08 /* ObjectTrackingSampleIcon.png in Resources */,
-				369F2C2C15C1A5290032BD08 /* FeatureDetectionSampleIcon.png in Resources */,
 				8A9ED49E19A6A56400D22EA9 /* Default-568h@2x.png in Resources */,
 				8AFE53CB15D7E3B200E7ADEB /* DoubleTableViewCell.xib in Resources */,
 				8A66F70A15DA3E2600EF1959 /* DefaultSampleIcon.png in Resources */,
 				8A66F70B15DA3E2600EF1959 /* DefaultSampleIcon~ipad.png in Resources */,
 				8A66F71515DA85BA00EF1959 /* VideoTrackingSampleIcon.png in Resources */,
-				8A4C5D7615E2CAEA008887F0 /* ROFSampleIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -706,13 +602,11 @@
 				8A4388DA1597171900027D3C /* EdgeDetectionSample.cpp in Sources */,
 				8A4388DC1597189A00027D3C /* main.mm in Sources */,
 				8A4388DD159718B100027D3C /* SampleBase.cpp in Sources */,
-				8A4388DE159718B100027D3C /* ContourDetectionSample.cpp in Sources */,
 				8A4388E81597B7BB00027D3C /* UIImage2OpenCV.mm in Sources */,
 				8A64E5DA1A7A867400319DCB /* CameraCalibrationAlgorithm.cpp in Sources */,
 				8A723FDB1599BB74008C72DB /* VideoViewController.mm in Sources */,
 				8AE69C0615A3A47F00DAA115 /* ImageViewController.mm in Sources */,
 				8AA7F85115A462400052C95A /* FPSCalculator.mm in Sources */,
-				8A79349315A9A3F70043BE99 /* ImageFiltersSample.cpp in Sources */,
 				8A79349F15A9ADA20043BE99 /* BooleanTableViewCell.mm in Sources */,
 				8A7934A815AB47070043BE99 /* SampleOptionsTableViewDelegate.mm in Sources */,
 				8A7934AB15AB48C80043BE99 /* NSString+StdString.mm in Sources */,
@@ -722,20 +616,14 @@
 				8A7934CD15AB5E440043BE99 /* EnumTableViewCell.mm in Sources */,
 				8A00096F15AD6DF9001EA42D /* OptionCell.mm in Sources */,
 				8A00097315AE0F0A001EA42D /* OptionsTableView.mm in Sources */,
-				8AB6D04315B856850029641C /* CartoonFilter.cpp in Sources */,
 				8AB6D04815B99B5B0029641C /* BaseSampleViewController.mm in Sources */,
 				8AB6D05015BDEB2F0029641C /* VideoTracking.cpp in Sources */,
-				363DA0BF15C097AC00347AB2 /* FeatureDetectionSample.cpp in Sources */,
 				369F2C2415C1A3C70032BD08 /* ObjectTrackingClass.cpp in Sources */,
 				369F2C2815C1A3F00032BD08 /* ObjectTrackingSample.cpp in Sources */,
 				369F2C2F15C1AEE50032BD08 /* Globals.cpp in Sources */,
 				8AFE53CA15D7E3B200E7ADEB /* DoubleTableViewCell.mm in Sources */,
 				8AFE53CF15D7F18E00E7ADEB /* cvneon.cpp in Sources */,
 				8A66F71215DA535C00EF1959 /* SampleFacade.mm in Sources */,
-				8A4C5D7515E2CAEA008887F0 /* ROFSample.cpp in Sources */,
-				8A4C5D7715E2CAEA008887F0 /* totalvariation.cpp in Sources */,
-				8A4A123D15F68B680096D272 /* DrawingCanvas.cpp in Sources */,
-				8A6E0BD81614946100C1D644 /* FeatureDetectionClass.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
