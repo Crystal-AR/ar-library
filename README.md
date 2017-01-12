@@ -41,3 +41,11 @@ If you mark a card as red this means that you are requesting for feedback. When 
 
 ##### Approving Card from Review
 If the card has an associated PR on Github feel free to just comment on Github and just move the Trello card to approved once it’s done with review
+
+### IV. How to get started
+Follow the steps taken in [*Create an Android Library*](https://developer.android.com/studio/projects/android-library.html) under the header *Add your library as a dependency*.
+
+1. Click File > New > Import Module.
+2. Make sure the library is included in your settings.gradle file.
+3. Compile the project in your list of dependencies.
+4. Sync gradle files.
