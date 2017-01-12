@@ -1,14 +1,10 @@
-package com.example.joshuapitkofsky.tesstest;
+package com.example.arlibrary;
 
 import android.graphics.Rect;
 
-/**
- * Created by thomas on 11/15/16.
- */
-
 /*
-     * basic class that collects a word and its position
-     */
+ * Basic class that collects a word and its position.
+ */
 public class Word {
     public Word(String s, Rect rect) {
         str = s;
@@ -29,3 +25,4 @@ public class Word {
         return String.valueOf(str) + " (" + String.valueOf(x) + ", " + String.valueOf(y) + ") (" + String.valueOf(width) + ", " + String.valueOf(height) + ")\n";
     }
 }
+

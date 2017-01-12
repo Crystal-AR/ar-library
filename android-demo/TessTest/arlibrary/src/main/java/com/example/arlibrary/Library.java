@@ -1,56 +1,14 @@
-package com.example.joshuapitkofsky.tesstest;
+package com.example.arlibrary;
 
-import java.net.URI;
-import java.net.URL;
-import java.net.MalformedURLException;
-
-import android.content.ContentResolver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Picture;
 import android.graphics.Rect;
-import android.graphics.drawable.PictureDrawable;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.TimingLogger;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import com.googlecode.leptonica.android.Pixa;
 import com.googlecode.tesseract.android.TessBaseAPI;
-
-import android.view.View;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.widget.Toast;
 
 public class Library {
     private TessBaseAPI mTess;    //Tess API reference
@@ -113,7 +71,7 @@ public class Library {
                 url = new URL(word.str);
                 urlsFound.add(url);
             } catch (MalformedURLException e) {
-                // skip this
+                // skip this -- should probably handle this somehow...
             }
         }
 
@@ -124,3 +82,4 @@ public class Library {
         return rtn;
     }
 }
+
