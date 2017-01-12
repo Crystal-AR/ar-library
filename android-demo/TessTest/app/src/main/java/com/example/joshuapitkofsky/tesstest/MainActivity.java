@@ -31,6 +31,14 @@ import java.net.URL;
 
 import com.example.arlibrary.*;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+
 public class MainActivity extends AppCompatActivity {
 
     Bitmap image; //our image
@@ -50,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
         datapath = getFilesDir() + "/tesseract/";
         ourLibrary = new Library(datapath);
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
+        } else {
+            Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
+        }
     }
 
     private void copyFile() {

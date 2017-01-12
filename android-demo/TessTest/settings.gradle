@@ -1,1 +1,3 @@
-include ':app', ':arlibrary'
+include ':app'
+include ':openCVLibrary310'
+include ':arlibrary'
