@@ -1,31 +1,35 @@
 package com.example.joshuapitkofsky.tesstest;
-import java.net.URL;
-import java.net.MalformedURLException;
+
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TimingLogger;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.googlecode.tesseract.android.TessBaseAPI;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 
+import com.example.arlibrary.*;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -35,36 +39,25 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-
-
 public class MainActivity extends AppCompatActivity {
 
     Bitmap image; //our image
-    private TessBaseAPI mTess; //Tess API reference
     String datapath = ""; //path to folder containing language data file
+    Library ourLibrary;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //init image
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.test_image);
+        // init image
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
 
-        datapath = getFilesDir()+ "/tesseract/";
-
-        //make sure training data has been copied
+        // make sure training data has been copied
         checkFile(new File(datapath + "tessdata/"));
 
-        //init Tesseract API
-        String language = "eng";
-
-        mTess = new TessBaseAPI();
-        mTess.init(datapath, language);
+        datapath = getFilesDir() + "/tesseract/";
+        ourLibrary = new Library(datapath);
 
         if (!OpenCVLoader.initDebug()) {
             Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
@@ -72,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
         }
     }
-
 
     private void copyFile() {
         try {
@@ -105,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkFile(File dir) {
         //directory does not exist, but we can successfully create it
-        if (!dir.exists()&& dir.mkdirs()){
+        if (!dir.exists() && dir.mkdirs()) {
             copyFile();
         }
         //The directory exists, but there is no data file in it
-        if(dir.exists()) {
-            String datafilepath = datapath+ "/tessdata/eng.traineddata";
+        if (dir.exists()) {
+            String datafilepath = datapath + "/tessdata/eng.traineddata";
             File datafile = new File(datafilepath);
             if (!datafile.exists()) {
                 copyFile();
@@ -118,89 +110,120 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class CharCoord {
-        public CharCoord(String ch, String x, String y, String X, String Y) {
-            c = ch.charAt(0);
-            x1 = Integer.parseInt(x);
-            y1 = Integer.parseInt(y);
-            x2 = Integer.parseInt(X);
-            y2 = Integer.parseInt(Y);
+    public void processImage(View view) {
+        ProgressDialog mDialog = new ProgressDialog(this);
+        mDialog.setMessage("Processing Image...");
+        mDialog.setCancelable(false);
+        mDialog.show();
+
+        ourLibrary.processImage(image);
+
+        Word[] words = ourLibrary.getWords();
+        for (int i = 0; i < words.length; ++i) {
+            ImageView iv = (ImageView)findViewById(R.id.imageView);
+            RelativeLayout rl = (RelativeLayout) findViewById(R.id.ImageContainer);
+            Button bt = new Button(this);
+            float imgWidth = (float) image.getWidth();
+            float imgHeight = (float) image.getHeight();
+            float viewWidth = (float) rl.getWidth();
+            float viewHeight = (float) rl.getHeight();
+
+            float scale;
+            if (imgHeight/viewHeight > imgWidth/viewWidth)
+                scale = viewHeight / imgHeight;
+            else
+                scale = viewWidth / imgWidth;
+
+            float xpos = (float) (words[i].x - imgWidth / 2.0);
+            float ypos = (float) (words[i].y - imgHeight / 2.0);
+            xpos = (float) (xpos * scale + viewWidth / 2.0);
+            ypos = (float) (ypos * scale + viewHeight / 2.0);
+
+            bt.setX(xpos);
+            bt.setY(ypos);
+            bt.setText(words[i].str);
+
+            rl.addView(bt);
         }
-        public char c;
-        int x1;
-        int y1;
-        int x2;
-        int y2;
 
-        @Override
-        public String toString() {
-            return String.valueOf(c) + " (" + String.valueOf(x1) + ", " + String.valueOf(y1) + ") (" + String.valueOf(x2) + ", " + String.valueOf(y2) + ")\n";
-        }
-    }
-
-    private CharCoord[] textCoordinatesToClass(String input) {
-        String[] lines = input.split("\n");
-        CharCoord[] rtn = new CharCoord[lines.length];
-        for (int i = 0; i < lines.length; ++i) {
-            String[] coords = lines[i].split(" ");
-            rtn[i] = new CharCoord(coords[0], coords[1], coords[2], coords[3], coords[4]);
-        }
-        Log.d("CharCoords", rtn[0].toString() );
-        return rtn;
-    }
-
-
-    CharCoord[] stuff;
-    public void processImage(View view){
-
-        mTess.setImage(image);
-        long startTime = System.nanoTime();
-        String OCRresult = mTess.getUTF8Text();
-
-
-        String coordinatesAsText = mTess.getBoxText(0);
-        stuff = textCoordinatesToClass(coordinatesAsText);
-
-
-        Bitmap b = Bitmap.createBitmap(500, 500, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        Paint myPaint = new Paint();
-        myPaint.setColor(Color.rgb(255, 0, 0));
-        myPaint.setStrokeWidth(3);
-        c.drawRect(stuff[0].x1, stuff[0].y1, stuff[0].x2, stuff[0].y2, myPaint);
-
-
-        long stopTime = System.nanoTime();
-        Log.d("Time Taken", String.valueOf(stopTime - startTime));
-        Log.d("OCR'ed Text:", OCRresult);
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
-        OCRTextView.setText(OCRresult);
-        processURL(OCRresult);
+        OCRTextView.setText(ourLibrary.getPrimitiveString());
+
+        mDialog.dismiss();
+
+        openURLs();
     }
 
-
-    public void processURL(String string){
+    public void openURLs() {
         // separate input by spaces ( URLs don't have spaces )
-        String [] parts = string.split("\\s+");
+        URL[] urls = ourLibrary.getURLs();
 
         // Attempt to convert each item into an URL.
-        for( String item : parts ) try {
-            URL url = new URL(item);
-            // If possible then replace with anchor...
-
-         //   Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
-           // startActivity(browserIntent);
-        } catch (MalformedURLException e) {
-            // If there was an URL that was not it!...
-            System.out.print( item + " " );
+        for (URL url : urls) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url.toString()));
+            startActivity(browserIntent);
         }
-
-        System.out.println();
     }
 
+    static final int REQUEST_TAKE_PHOTO = 1;
 
+    private Uri mImageUri;
+
+    public void dispatchTakePictureIntent(View view) {
+        Context context = this;
+        PackageManager pm = context.getPackageManager();
+
+        if (pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+            Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+            File photo = null;
+            try {
+                // place where to store camera taken picture
+                photo = this.createTemporaryFile("picture", ".jpg");
+                photo.delete();
+            } catch (Exception e) {
+                Log.v("Error", "Can't create file to take picture!");
+            }
+            mImageUri = Uri.fromFile(photo);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+            //start camera intent
+            this.startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+        }
     }
 
+    private File createTemporaryFile(String part, String ext) throws Exception {
+        File externalStoradeDir = Environment.getExternalStorageDirectory();
+        File tempDir = new File(externalStoradeDir.getAbsolutePath() + "/.temp/");
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+        return File.createTempFile(part, ext, tempDir);
+    }
 
+    public void grabImage(ImageView imageView) {
+        this.getContentResolver().notifyChange(mImageUri, null);
+        ContentResolver cr = this.getContentResolver();
+        Bitmap bitmap;
+        try {
+            bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
 
+            Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 400, (bitmap.getHeight() / bitmap.getWidth()) * 400, false);
 
+            imageView.setImageBitmap(thumb);
+            image = thumb;
+        } catch (Exception e) {
+            Toast.makeText(this, "Failed to load", Toast.LENGTH_SHORT).show();
+            Log.d("Error", "Failed to load", e);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            ImageView mImageView = (ImageView) findViewById(R.id.imageView);
+            //... some code to inflate/create/find appropriate ImageView to place grabbed image
+            this.grabImage(mImageView);
+        }
+        super.onActivityResult(requestCode, resultCode, intent);
+    }
+
+}
