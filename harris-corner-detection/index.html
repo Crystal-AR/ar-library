@@ -3,7 +3,10 @@
 <script>
 var cvs, c;
 var img = new Image();
-img.src = "real.jpg";
+
+var srcs = [ "building.jpg", "chessboard.png", "real.jpg", "table.jpg" ];
+
+img.src = srcs[3];
 
 function index(x, y) {
     return 4 * (cvs.width * y + x);
@@ -13,6 +16,14 @@ function edge(x, y, w, h, pad) {
     return x < pad || y < pad || w-x-1 < pad || h-y-1 < pad;
 }
 
+function median(arr) {
+    arr.sort(function(a, b) {return a - b});
+    if (arr.length%2 == 0)
+        return (arr[arr.length/2] + arr[arr.length/2 - 1]) / 2;
+    else
+        return arr[(arr.length-1)/2];
+}
+
 onload = function () {
     cvs = document.getElementById("cvs")
     c = cvs.getContext("2d");
@@ -20,18 +31,41 @@ onload = function () {
     cvs.height = 250;
     c.drawImage(img, 0, 0, cvs.width, cvs.height);
     var imgData = c.getImageData(0, 0, cvs.width, cvs.height);
+    var intensity_a = new Array(cvs.width);
+    for (var x = 0; x < cvs.width; ++x) {
+        intensity_a[x] = new Array(cvs.height);
+        for (var y = 0; y < cvs.height; ++y) {
+            var i = index(x, y);
+            intensity_a[x][y] = (imgData.data[i] + imgData.data[i+2] + imgData.data[i+3]) / 3;
+        }
+    }
+
+    /*
+     * smooth intensity
+     */
     var intensity = new Array(cvs.width);
     for (var x = 0; x < cvs.width; ++x) {
         intensity[x] = new Array(cvs.height);
         for (var y = 0; y < cvs.height; ++y) {
+            if (x == 0 || y == 0 || x == cvs.width - 1 || y == cvs.height - 1) {
+                intensity[x][y] = intensity_a[x][y];
+                continue;
+            }
+            intensity[x][y] = intensity_a[x][y];
+            // intensity[x][y] = intensity_a[x-1][y-1] + intensity_a[x][y-1] + intensity_a[x+1][y-1] + intensity_a[x-1][y] + intensity_a[x][y] + intensity_a[x+1][y] + intensity_a[x-1][y+1] + intensity_a[x][y+1] + intensity_a[x+1][y+1];
+            intensity[x][y] = median([intensity_a[x-1][y-1], intensity_a[x][y-1], intensity_a[x+1][y-1], intensity_a[x-1][y], intensity_a[x][y], intensity_a[x+1][y], intensity_a[x-1][y+1], intensity_a[x][y+1], intensity_a[x+1][y+1]]);
+            // intensity[x][y] /= 9;
             var i = index(x, y);
-            intensity[x][y] = imgData.data[i] + imgData.data[i+2] + imgData.data[i+3];
-            imgData.data[i] = intensity[x][y] / 3;
-            imgData.data[i + 1] = intensity[x][y] / 3;
-            imgData.data[i + 2] = intensity[x][y] / 3;
+            imgData.data[i] = intensity[x][y];
+            imgData.data[i+1] = intensity[x][y];
+            imgData.data[i+2] = intensity[x][y];
+            imgData.data[i+3] = 255;
         }
     }
     c.putImageData(imgData, 0, 0);
+
+    // c.putImageData(imgData, 0, 0);
+    // return;
 
     /*
      * Compute the partial derivatives of I
@@ -42,7 +76,7 @@ onload = function () {
     var xx = new Array(cvs.width);
     var xy = new Array(cvs.width);
     var yy = new Array(cvs.width);
-    var smooth = 2;
+    var smooth = 1;
     for (var x = 0; x < cvs.width; ++x) {
         xx[x] = new Array(cvs.height);
         xy[x] = new Array(cvs.height);
@@ -94,8 +128,8 @@ onload = function () {
     /*
      * Use eigenvalues to identify corners
      */
-    var w = 2;
-    var h = 2;
+    var w = 6;
+    var h = 6;
     var k_B = 0.01 / (w * h);
     var k_A = 0.01 / (w * h);
     for (var x = w; x < cvs.width - w; ++x) {
@@ -106,7 +140,13 @@ onload = function () {
             var A = cumXX[x+w][y+h]+cumXX[x][y]-cumXX[x+w][y]-cumXX[x][y+h];
             var B = cumXY[x+w][y+h]+cumXY[x][y]-cumXY[x+w][y]-cumXY[x][y+h];
             var C = cumYY[x+w][y+h]+cumYY[x][y]-cumYY[x+w][y]-cumYY[x][y+h];
+            x += w/2;
+            y += h/2;
 
+            /*
+             *   xx^2  xy^2
+             *   xy^2  yy^2
+             */
             var eigens = compute_eigenvalues([[A,B],[B,C]]);
             var mag_1 = magnitude(eigens[0]);
             var mag_2 = magnitude(eigens[1]);
@@ -119,17 +159,14 @@ onload = function () {
             /*
              * A corner is detected when both eigenvalues are large, and neither is significantly larger than the other: http://opencv-python-tutroals.readthedocs.io/en/latest/_images/harris_region.jpg
              */
-            var threshold_1 = 100000;
-            var threshold_2 = 0.2;
+            var threshold_1 = 30000;
+            var threshold_2 = 0.4;
             if (mag_1 + mag_2 > threshold_1) {
                 var angle = Math.atan2(mag_1, mag_2);
                 if (threshold_2 < angle && angle < Math.PI/2 - threshold_2) {
                     imgData.data[mid] = 255;
                 }
             }
-
-            x += w/2;
-            y += h/2;
         }
     }
 
