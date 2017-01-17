@@ -6,7 +6,7 @@ var img = new Image();
 
 var srcs = [ "building.jpg", "chessboard.png", "real.jpg", "table.jpg" ];
 
-img.src = srcs[2];
+img.src = srcs[1];
 
 function index(x, y) {
     return 4 * (cvs.width * y + x);
@@ -62,84 +62,64 @@ onload = function () {
             imgData.data[i+3] = 255;
         }
     }
-    // c.putImageData(imgData, 0, 0);
 
-    // c.putImageData(imgData, 0, 0);
-    // return;
-
-    /*
-     * Compute the partial derivatives of I
-     * xx is I_x * I_x
-     * xy is I_x * I_y
-     * yy is I_y * I_y
-     */
-    var xx = new Array(cvs.width);
-    var xy = new Array(cvs.width);
-    var yy = new Array(cvs.width);
+    var dx = new Array(cvs.width);
+    var dy = new Array(cvs.width);
     var smooth = 1;
     for (var x = 0; x < cvs.width; ++x) {
-        xx[x] = new Array(cvs.height);
-        xy[x] = new Array(cvs.height);
-        yy[x] = new Array(cvs.height);
+        dx[x] = new Array(cvs.height);
+        dy[x] = new Array(cvs.height);
         for (var y = 0; y < cvs.height; ++y) {
             if (edge(x, y, cvs.width, cvs.height, smooth)) {
-                xx[x][y] = 0;
-                xy[x][y] = 0;
-                yy[x][y] = 0;
+                dx[x][y] = 0;
+                dy[x][y] = 0;
                 continue;
             }
-            var dx = intensity[x+smooth][y] - intensity[x-smooth][y];
-            var dy = intensity[x][y+smooth] - intensity[x][y-smooth];
-            xx[x][y] = dx*dx;
-            xy[x][y] = dx*dy;
-            yy[x][y] = dy*dy;
-        }
-    }
-
-    /*
-     * Compute cumulatives of xx, xy, and yy to allow for much more efficient sums
-     */
-    var cumXX = new Array(cvs.width);
-    var cumXY = new Array(cvs.width);
-    var cumYY = new Array(cvs.width);
-    for (var x = 0; x < cvs.width; ++x) {
-        cumXX[x] = new Array(cvs.height);
-        cumXY[x] = new Array(cvs.height);
-        cumYY[x] = new Array(cvs.height);
-    }
-    for (var x = 0; x < cvs.width; ++x) {
-        cumXX[x][0] = xx[x][0];
-        cumXY[x][0] = xy[x][0];
-        cumYY[x][0] = yy[x][0];
-    }
-    for (var y = 0; y < cvs.height; ++y) {
-        cumXX[0][y] = xx[0][y];
-        cumXY[0][y] = xy[0][y];
-        cumYY[0][y] = yy[0][y];
-    }
-    for (var x = 1; x < cvs.width; ++x) {
-        for (var y = 1; y < cvs.height; ++y) {
-            cumXX[x][y] = xx[x][y] + cumXX[x][y-1] + cumXX[x-1][y] - cumXX[x-1][y-1];
-            cumXY[x][y] = xy[x][y] + cumXY[x][y-1] + cumXY[x-1][y] - cumXY[x-1][y-1];
-            cumYY[x][y] = yy[x][y] + cumYY[x][y-1] + cumYY[x-1][y] - cumYY[x-1][y-1];
+            dx[x][y] = intensity[x+1][y] - intensity[x-1][y];
+            dy[x][y] = intensity[x][y+1] - intensity[x][y-1];
         }
     }
 
     /*
      * Use eigenvalues to identify corners
      */
-    var w = 6;
-    var h = 6;
+    var w = 20;
+    var h = 20;
     var k_B = 0.01 / (w * h);
     var k_A = 0.01 / (w * h);
+    for (var x = 0; x < cvs.width; ++x) {
+        for (var y = 0; y < cvs.height; ++y) {
+            var mid = index(x, y);
+            imgData.data[mid]   = 0;
+            imgData.data[mid+1] = 0;
+            imgData.data[mid+2] = 0;
+            imgData.data[mid+3] = 0;
+        }
+    }
     for (var x = w; x < cvs.width - w; ++x) {
         for (var y = h; y < cvs.height - h; ++y) {
             var mid = index(x, y);
             x -= w/2;
             y -= h/2;
-            var A = cumXX[x+w][y+h]+cumXX[x][y]-cumXX[x+w][y]-cumXX[x][y+h];
-            var B = cumXY[x+w][y+h]+cumXY[x][y]-cumXY[x+w][y]-cumXY[x][y+h];
-            var C = cumYY[x+w][y+h]+cumYY[x][y]-cumYY[x+w][y]-cumYY[x][y+h];
+            var mean_x = 0;
+            var mean_y = 0;
+            for (var X = 0; X < w; ++X) {
+                for (var Y = 0; Y < h; ++Y) {
+                    mean_x += dx[x+X][y+Y];
+                    mean_y += dy[x+X][y+Y];
+                }
+            }
+            var xx = 0;
+            var xy = 0;
+            var yy = 0;
+            for (var X = 0; X < w; ++X) {
+                for (var Y = 0; Y < h; ++Y) {
+                    xx += (dx[x+X][y+Y] - mean_x) * (dx[x+X][y+Y] - mean_x);
+                    xy += (dx[x+X][y+Y] - mean_x) * (dy[x+X][y+Y] - mean_y);
+                    yy += (dy[x+X][y+Y] - mean_y) * (dy[x+X][y+Y] - mean_y);
+                }
+            }
+
             x += w/2;
             y += h/2;
 
@@ -147,24 +127,25 @@ onload = function () {
              *   xx^2  xy^2
              *   xy^2  yy^2
              */
-            var eigens = compute_eigenvalues([[A,B],[B,C]]);
+            var eigens = compute_eigenvalues([[xx, xy], [xy, yy]]);
             var mag_1 = magnitude(eigens[0]);
             var mag_2 = magnitude(eigens[1]);
-
-            imgData.data[mid]   = 0;
-            imgData.data[mid+1] = 0;
-            imgData.data[mid+2] = 0;
-            imgData.data[mid+3] = 128;
 
             /*
              * A corner is detected when both eigenvalues are large, and neither is significantly larger than the other: http://opencv-python-tutroals.readthedocs.io/en/latest/_images/harris_region.jpg
              */
-            var threshold_1 = 30000;
-            var threshold_2 = 0.4;
+            // if (x == 50 && y == 150) {
+            if (x == 86 && y == 152) {
+                console.log(xx, xy, yy);
+                console.log(mag_1, mag_2);
+            }
+            var threshold_1 = 100000000;
+            var threshold_2 = 0.0003;
             if (mag_1 + mag_2 > threshold_1) {
                 var angle = Math.atan2(mag_1, mag_2);
                 if (threshold_2 < angle && angle < Math.PI/2 - threshold_2) {
                     imgData.data[mid] = 255;
+                    imgData.data[mid+3] = 255;
                 }
             }
         }
