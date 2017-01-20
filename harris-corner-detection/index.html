@@ -6,7 +6,7 @@ var img = new Image();
 
 var srcs = [ "building.jpg", "chessboard.png", "real.jpg", "table.jpg" ];
 
-img.src = srcs[2];
+img.src = srcs[1];
 
 function index(x, y) {
     return 4 * (cvs.width * y + x);
@@ -31,6 +31,7 @@ onload = function () {
     cvs.height = 250;
     c.drawImage(img, 0, 0, cvs.width, cvs.height);
     var imgData = c.getImageData(0, 0, cvs.width, cvs.height);
+    var start_time = (new Date()).getTime();
     var intensity_a = new Array(cvs.width);
     for (var x = 0; x < cvs.width; ++x) {
         intensity_a[x] = new Array(cvs.height);
@@ -39,6 +40,7 @@ onload = function () {
             intensity_a[x][y] = (imgData.data[i] + imgData.data[i+2] + imgData.data[i+3]) / 3;
         }
     }
+    var intensity_time_1 = (new Date()).getTime();
 
     /*
      * smooth intensity
@@ -62,6 +64,7 @@ onload = function () {
             imgData.data[i+3] = 255;
         }
     }
+    var intensity_time_2 = (new Date()).getTime();
     // c.putImageData(imgData, 0, 0);
 
     // c.putImageData(imgData, 0, 0);
@@ -96,6 +99,8 @@ onload = function () {
         }
     }
 
+    var d_time = (new Date()).getTime();
+
     /*
      * Compute cumulatives of xx, xy, and yy to allow for much more efficient sums
      */
@@ -125,6 +130,8 @@ onload = function () {
         }
     }
 
+    var cum_time = (new Date()).getTime();
+
     /*
      * Use eigenvalues to identify corners
      */
@@ -151,6 +158,7 @@ onload = function () {
             var mag_1 = magnitude(eigens[0]);
             var mag_2 = magnitude(eigens[1]);
 
+
             imgData.data[mid]   = 0;
             imgData.data[mid+1] = 0;
             imgData.data[mid+2] = 0;
@@ -169,6 +177,12 @@ onload = function () {
             }
         }
     }
+    var end_time = (new Date()).getTime();
+    console.log(intensity_time_1 - start_time);
+    console.log(intensity_time_2 - intensity_time_1);
+    console.log(d_time - intensity_time_2);
+    console.log(cum_time - d_time);
+    console.log(end_time - cum_time);
 
     var cvs2 = document.createElement("canvas");
     cvs2.width = cvs.width;

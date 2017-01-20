@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Harris Corner Detection</title>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_CHTML">
+</script>
+<script>
+
+var cvs = null;
+var c = null;
+var nothing = [[5, 5, 5, 5, 5],
+               [5, 5, 5, 5, 5],
+               [5, 5, 5, 5, 5],
+               [5, 5, 5, 5, 5],
+               [5, 5, 5, 5, 5]];
+
+var edge =    [[0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9]];
+
+var corner =  [[0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9],
+               [0, 0, 0, 9, 9],
+               [9, 9, 9, 9, 9],
+               [9, 9, 9, 9, 9]];
+
+var rot_cor = [[0, 0, 0, 0, 0],
+               [9, 0, 0, 0, 9],
+               [9, 9, 0, 9, 9],
+               [9, 9, 9, 9, 9],
+               [9, 9, 9, 9, 9]];
+
+function add_noise(arr, k) {
+    for (var i = 0; i < arr.length; ++i) {
+        for (var j = 0; j < arr[i].length; ++j) {
+            arr[i][j] /= 9;
+            arr[i][j] *= 1 - 2*k;
+            arr[i][j] += k;
+            arr[i][j] += 2 * k * (Math.random() - 0.5);
+            arr[i][j] = Math.min(arr[i][j], 1);
+            arr[i][j] = Math.max(arr[i][j], 0);
+        }
+    }
+}
+
+function draw(cvs, arr) {
+    var c = cvs.getContext("2d");
+    var w = cvs.width / arr[0].length;
+    var h = cvs.height / arr.length;
+    for (var y = 0; y < arr.length; ++y) {
+        for (var x = 0; x < arr[y].length; ++x) {
+            if (arr[y][x] == -1) {
+                c.fillStyle = "red";
+            }
+            else {
+                var shade = Math.floor(255 * arr[y][x]);
+                c.fillStyle = "rgb(" + shade + ", " + shade + ", " + shade + ")";
+            }
+            c.fillRect(w*x, h*y, w, h);
+        }
+    }
+}
+
+function dx(arr) {
+    var rtn = new Array(arr.length);
+    for (var y = 0; y < arr.length; ++y) {
+        rtn[y] = new Array(arr[0].length)
+        for (var x = 1; x < arr[y].length; ++x) {
+            rtn[y][x] = arr[y][x] - arr[y][x-1];
+            rtn[y][x] = (rtn[y][x] + 1) / 2;
+        }
+    }
+    for (var y = 0; y < arr.length; ++y)
+        rtn[y][0] = -1;
+    return rtn;
+}
+
+function dy(arr) {
+    var rtn = new Array(arr.length);
+    for (var y = 1; y < arr.length; ++y) {
+        rtn[y] = new Array(arr[0].length)
+        for (var x = 0; x < arr[y].length; ++x) {
+            rtn[y][x] = arr[y][x] - arr[y-1][x];
+            rtn[y][x] = (rtn[y][x] + 1) / 2;
+        }
+    }
+    rtn[0] = new Array(arr[0].length);
+    for (var x = 0; x < arr[0].length; ++x)
+        rtn[0][x] = -1;
+    return rtn;
+}
+
+var error = 0.05;
+add_noise(nothing, error);
+add_noise(edge, error);
+add_noise(corner, error);
+add_noise(rot_cor, error);
+
+onload = function () {
+    cvs = document.getElementsByTagName("canvas");
+    c = new Array(cvs.length);
+    for (var i = 0; i < cvs.length; ++i) {
+        c[i] = cvs[i].getContext("2d");
+    }
+    draw(cvs[0], nothing);
+    draw(cvs[1], edge);
+    draw(cvs[2], corner);
+    draw(cvs[3], rot_cor);
+
+    draw(cvs[4], dx(nothing));
+    draw(cvs[5], dx(edge));
+    draw(cvs[6], dx(corner));
+    draw(cvs[7], dx(rot_cor));
+
+    draw(cvs[8], dy(nothing));
+    draw(cvs[9], dy(edge));
+    draw(cvs[10], dy(corner));
+    draw(cvs[11], dy(rot_cor));
+
+    draw_scatter(cvs[12], nothing);
+    draw_scatter(cvs[13], edge);
+    draw_scatter(cvs[14], corner);
+    draw_scatter(cvs[15], rot_cor);
+
+    draw_scatter(cvs[16], nothing, true);
+    draw_scatter(cvs[17], edge, true);
+    draw_scatter(cvs[18], corner, true);
+    draw_scatter(cvs[19], rot_cor, true);
+
+    draw(cvs[20], nothing);
+    draw(cvs[21], edge);
+    draw(cvs[22], corner);
+    draw(cvs[23], rot_cor);
+
+    draw_elipse(cvs[24], nothing, true);
+    draw_elipse(cvs[25], edge, true);
+    draw_elipse(cvs[26], corner, true);
+    draw_elipse(cvs[27], rot_cor, true);
+}
+
+function compute_bs(arr) {
+    var Bx = new Array();
+    var By = new Array();
+    var i = 0;
+    var x_mean = 0;
+    var y_mean = 0;
+    for (var y = 1; y < arr.length; ++y) {
+        for (var x = 1; x < arr[y].length; ++x) {
+            var dx = arr[y][x] - arr[y][x-1];
+            var dy = arr[y][x] - arr[y-1][x];
+            Bx.push(dx);
+            By.push(dy);
+            x_mean += dx;
+            y_mean += dy;
+        }
+    }
+    x_mean /= Bx.length;
+    y_mean /= By.length;
+    return {
+        "Bx": Bx,
+        "By": By,
+        "x_mean": x_mean,
+        "y_mean": y_mean
+    }
+}
+
+function draw_scatter(cvs, arr, should_center) {
+    var info = compute_bs(arr);
+    var Bx = info.Bx;
+    var By = info.By;
+    var x_mean = info.x_mean;
+    var y_mean = info.y_mean;
+
+    if (should_center == undefined) should_center = false;
+    var c = cvs.getContext("2d");
+    var cx = cvs.width / 2;
+    var cy = cvs.height / 2;
+    var scale = 200;
+    var r = 7;
+    c.fillStyle = "red";
+    for (var i = 0; i < Bx.length; ++i) {
+        c.beginPath();
+        if (should_center) {
+            Bx[i] -= x_mean;
+            By[i] -= y_mean;
+        }
+        c.arc(scale * Bx[i] + cx, -1 * scale * By[i] + cy, r, 0, 2*Math.PI);
+        c.fill();
+    }
+
+    c.strokeStyle = "blue";
+    c.lineWidth = 3;
+    c.beginPath();
+    c.moveTo(cx, 0);
+    c.lineTo(cx, cvs.height);
+    c.moveTo(0, cy);
+    c.lineTo(cvs.width, cy);
+    c.stroke();
+}
+
+function draw_elipse(cvs, arr) {
+    draw_scatter(cvs, arr, true)
+    var info = compute_bs(arr)
+    var Bx = info.Bx;
+    var By = info.By;
+    var x_mean = info.x_mean;
+    var y_mean = info.y_mean;
+    var xx = 0;
+    var xy = 0;
+    var yy = 0;
+    for (var i = 0; i < Bx.length; ++i) {
+        Bx[i] -= x_mean;
+        By[i] -= y_mean;
+        xx += Bx[i] * Bx[i];
+        xy += Bx[i] * By[i];
+        yy += By[i] * By[i];
+    }
+
+    var c = cvs.getContext("2d");
+    var cx = cvs.width / 2;
+    var cy = cvs.height / 2;
+    var scale = 50;
+    c.lineWidth = 5;
+    c.strokeStyle = "black";
+    c.fillStyle = "black";
+
+    var eigenvalues = compute_eigenvalues([[xx, xy], [xy, yy]]);
+    var eigenvector_1 = unitify([1, (eigenvalues[0] - xx) / xy]);
+    var eigenvector_2 = unitify([1, (eigenvalues[1] - xx) / xy]);
+    drawArrow(c, cx, cy, cx+eigenvector_1[0] * eigenvalues[0] * scale, cy-eigenvector_1[1] * eigenvalues[0] * scale);
+    drawArrow(c, cx, cy, cx+eigenvector_2[0] * eigenvalues[1] * scale, cy-eigenvector_2[1] * eigenvalues[1] * scale);
+}
+
+function unitify(vector) {
+    var len = Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1]);
+    return [vector[0] / len, vector[1] / len];
+}
+
+function compute_eigenvalues(mat) {
+    var T = mat[0][0] + mat[1][1];
+    var D = mat[0][0] * mat[1][1] - mat[0][1] * mat[1][0];
+    return [T/2 + Math.sqrt(T*T/4-D), T/2 - Math.sqrt(T*T/4-D)];
+}
+
+function drawArrow(c, x1, y1, x2, y2, len, angle) {
+    var deltaX = (x2-x1);
+    var deltaY = (y2-y1);
+    var oldLen = Math.sqrt(deltaX*deltaX+deltaY*deltaY);
+    if(!angle)
+    {
+        angle = 0.523598776;
+        if(!len)
+        {
+            len = Math.sqrt(c.lineWidth) * 8;
+        }
+    }
+    deltaX /= oldLen;
+    deltaY /= oldLen;
+
+    deltaX *= len;
+    deltaY *= len;
+
+    c.beginPath();
+    c.moveTo(x1, y1);
+    c.lineTo(x2 - deltaX*0.8, y2 - deltaY*0.8);
+    c.stroke();
+
+    c.beginPath();
+    c.moveTo(x2-Math.sin(angle)*deltaY-Math.cos(angle)*deltaX,y2+Math.sin(angle)*deltaX-Math.cos(angle)*deltaY);
+    c.lineTo(x2+Math.sin(angle)*deltaY-Math.cos(angle)*deltaX,y2-Math.sin(angle)*deltaX-Math.cos(angle)*deltaY);
+    c.lineTo(x2, y2);
+    c.fill();
+}
+
+</script>
+<style>
+main {
+    width: 100%;
+}
+
+p, ol {
+    max-width: 30em;
+    margin: 1em auto;
+}
+
+td {
+    width: 25%;
+    padding: 0.5em;
+}
+
+table {
+    max-width: 100vh;
+    margin: 0 auto;
+}
+
+canvas {
+    width: 100%;
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Intensity</h1>
+<p>
+    Imagine you had some images like
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    Each pixel has an brightness. Given a pixel $(x, y)$, we can refer to this brightness as $B(x,y)$.
+</p><p>
+    By taking the difference in adjacent pixels' brightnesses as we move right, we can compute a "partial derivative" of brightness, $B_X(x,y)$. By squaring this, we can compute how much the brightness is changing at each pixel in absolute terms. This is called $B_X^2(x,y)$:
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    We can do the same thing moving up-and-down and call that $B_Y^2(x,y)$:
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    For each pixel $(x, y)$, we can now plot its $B_X$ and $B_Y$ values:
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    Next, we center the points:
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    Now, we can examine the covariance matrix:
+    $$\begin{bmatrix}\sum_{x,y}{B_X^2(x,y)} & \sum_{x,y}{B_X(x,y)B_Y(x,y)}\\\sum_{x,y}{B_X(x,y)B_Y(x,y)} & \sum_{x,y}{B_Y^2(x,y)}\end{bmatrix}$$
+    And, using EigenMagic<sup>TM</sup>, compute
+    <ol>
+        <li>the direction that maximizes variance</li>
+        <li>the direction that minimizes variance</li>
+    </ol>
+</p>
+<table>
+    <thead>
+    </thead>
+    <tbody>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+        <tr>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+            <td><canvas width="400" height="400"></canvas></td>
+        </tr>
+        <tr>
+            <td>A region with neither a corner nor an edge has small and random intensity-changes.</td>
+            <td>A region with an edge has some pixels that vary much more than others.</td>
+            <td colspan="2">A region with a corner sees variance in two perpendicular directions.</td>
+        </tr>
+    </tbody>
+</table>
+<p>
+    Here is the crucial insight:
+    <ol>
+        <li>If a section of the image doesn't have any edges or corners, there should be very little variance in any direction.</li>
+        <li>If a section of an image contains an edge, then it should have large variance in one particular direction.</li>
+        <li>If a section of an image contains a corner, then it should have large variance in <b>all</b> directions.</li>
+    </ol>
+</p>
+<p>
+    If you look at the scatterplots and eigenvectors above, you should see this realized.
+</p>
+</main>
+</body>
+</html>
