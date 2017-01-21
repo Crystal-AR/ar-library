@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import com.example.arlibrary.*;
 
@@ -41,6 +43,7 @@ import org.opencv.core.Mat;
 
 public class MainActivity extends AppCompatActivity {
 
+
     Bitmap image; //our image
     String datapath = ""; //path to folder containing language data file
     Library ourLibrary;
@@ -49,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Bitmap image2 = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
+
+        HarrisCornerFinder hcf = new HarrisCornerFinder();
+
+
+        ArrayList<HarrisCornerFinder.HarrisCorner> finalCorners  = hcf.findCorners(image2);
 
         // init image
         image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
@@ -64,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
         }
+
     }
 
     private void copyFile() {
