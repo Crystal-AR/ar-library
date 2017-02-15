@@ -31,7 +31,7 @@
         android:layout_alignParentTop="true"
         android:background="#167865"
         android:clickable="true"
-        android:onClick="processImage">
+        android:onClick="initiateHandler">
 
         <TextView
             android:id="@+id/OCRbutton"
@@ -40,7 +40,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:onClick="processImage"
+            android:onClick="initiateHandler"
             android:text="Run OCR"
             android:textSize="18dp" />
 

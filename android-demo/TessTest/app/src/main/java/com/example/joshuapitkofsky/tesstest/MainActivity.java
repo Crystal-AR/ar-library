@@ -11,12 +11,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,8 +31,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
-import com.example.arlibrary.*;
+import com.crystal_ar.crystal_ar.*;
+//import com.example.arlibrary.*;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -43,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     Bitmap image; //our image
     String datapath = ""; //path to folder containing language data file
-    Library ourLibrary;
+//    Library ourLibrary;
+    CrystalAR notSaba;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +57,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // init image
-        image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
+//        image = BitmapFactory.decodeResource(getResources(), R.drawable.text_test_four);
+        image = BitmapFactory.decodeResource(getResources(), R.drawable.phonenumbers1);
 
         // make sure training data has been copied
-        checkFile(new File(datapath + "tessdata/"));
-
-        datapath = getFilesDir() + "/tesseract/";
-        ourLibrary = new Library(datapath);
+//        checkFile(new File(datapath + "tessdata/"));
+//
+//        datapath = getFilesDir() + "/tesseract/";
+//        ourLibrary = new Library(datapath);
+        Context context = getApplicationContext();
+        notSaba = new CrystalAR(context);
+        notSaba.setLanguage("eng");
 
         if (!OpenCVLoader.initDebug()) {
             Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
@@ -66,46 +76,70 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void copyFile() {
-        try {
-            //location we want the file to be at
-            String filepath = datapath + "/tessdata/eng.traineddata";
+//    private void copyFile() {
+//        try {
+//            //location we want the file to be at
+//            String filepath = datapath + "/tessdata/eng.traineddata";
+//
+//            //get access to AssetManager
+//            AssetManager assetManager = getAssets();
+//
+//            //open byte streams for reading/writing
+//            InputStream instream = assetManager.open("tessdata/eng.traineddata");
+//            OutputStream outstream = new FileOutputStream(filepath);
+//
+//            //copy the file to the location specified by filepath
+//            byte[] buffer = new byte[1024];
+//            int read;
+//            while ((read = instream.read(buffer)) != -1) {
+//                outstream.write(buffer, 0, read);
+//            }
+//            outstream.flush();
+//            outstream.close();
+//            instream.close();
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    private void checkFile(File dir) {
+//        //directory does not exist, but we can successfully create it
+//        if (!dir.exists() && dir.mkdirs()) {
+//            copyFile();
+//        }
+//        //The directory exists, but there is no data file in it
+//        if (dir.exists()) {
+//            String datafilepath = datapath + "/tessdata/eng.traineddata";
+//            File datafile = new File(datafilepath);
+//            if (!datafile.exists()) {
+//                copyFile();
+//            }
+//        }
+//    }
 
-            //get access to AssetManager
-            AssetManager assetManager = getAssets();
-
-            //open byte streams for reading/writing
-            InputStream instream = assetManager.open("tessdata/eng.traineddata");
-            OutputStream outstream = new FileOutputStream(filepath);
-
-            //copy the file to the location specified by filepath
-            byte[] buffer = new byte[1024];
-            int read;
-            while ((read = instream.read(buffer)) != -1) {
-                outstream.write(buffer, 0, read);
-            }
-            outstream.flush();
-            outstream.close();
-            instream.close();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void initiateHandler(View view) {
+        imageHandler handler = new imageHandler(view);
+//        Thread thread = new Thread(notSaba.processImageAsync(handler, image));
+        Thread thread = new Thread(notSaba.getProcessImageRunnable(handler, image));
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    private void checkFile(File dir) {
-        //directory does not exist, but we can successfully create it
-        if (!dir.exists() && dir.mkdirs()) {
-            copyFile();
+    private class imageHandler extends Handler {
+        View view;
+
+        public imageHandler(View view) {
+            this.view = view;
         }
-        //The directory exists, but there is no data file in it
-        if (dir.exists()) {
-            String datafilepath = datapath + "/tessdata/eng.traineddata";
-            File datafile = new File(datafilepath);
-            if (!datafile.exists()) {
-                copyFile();
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case CrystalAR.IMAGE_PROCESSED:
+                    processImage(this.view);
+                    break;
             }
         }
     }
@@ -116,9 +150,9 @@ public class MainActivity extends AppCompatActivity {
         mDialog.setCancelable(false);
         mDialog.show();
 
-        ourLibrary.processImage(image);
+//        notSaba.processImage(image);
 
-        Word[] words = ourLibrary.getWords();
+        Word[] words = notSaba.getWords();
         for (int i = 0; i < words.length; ++i) {
             ImageView iv = (ImageView)findViewById(R.id.imageView);
             RelativeLayout rl = (RelativeLayout) findViewById(R.id.ImageContainer);
@@ -147,16 +181,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         TextView OCRTextView = (TextView) findViewById(R.id.OCRTextView);
-        OCRTextView.setText(ourLibrary.getPrimitiveString());
+        OCRTextView.setText(notSaba.getPrimitiveString());
 
         mDialog.dismiss();
 
-        openURLs();
+//        ArrayList<String> phonenumbers = notSaba.getPhoneNumbers();
+//        Log.d("#", Integer.toString(phonenumbers.size()));
+//        for (String number : phonenumbers) {
+//            Log.d("phone", number);
+//            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", number, null));
+//            startActivity(intent);
+//        }
+
+//        openURLs();
     }
 
     public void openURLs() {
         // separate input by spaces ( URLs don't have spaces )
-        URL[] urls = ourLibrary.getURLs();
+        URL[] urls = notSaba.getURLs();
 
         // Attempt to convert each item into an URL.
         for (URL url : urls) {
