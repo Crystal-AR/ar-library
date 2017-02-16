@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="Qwp-Gv-0HU">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Map-->
+        <scene sceneID="ufC-wZ-h7g">
+            <objects>
+                <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="map_ar" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
+                        <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" mapType="standard" showsUserLocation="YES" translatesAutoresizingMaskIntoConstraints="NO" id="v4H-7c-eVk">
+                                <frame key="frameInset" width="600" height="600"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="v4H-7c-eVk" secondAttribute="trailing" id="GAV-yQ-KJy"/>
+                            <constraint firstItem="v4H-7c-eVk" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" id="HBU-WX-MdK"/>
+                            <constraint firstItem="v4H-7c-eVk" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Iy2-Bf-aaT"/>
+                            <constraint firstItem="v4H-7c-eVk" firstAttribute="bottom" secondItem="2fi-mo-0CV" secondAttribute="top" id="uuR-RU-Noz"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Map" image="Map Pin" id="mSY-x4-6Zr"/>
+                    <connections>
+                        <outlet property="mapView" destination="v4H-7c-eVk" id="0df-Jb-XJ2"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1396" y="308.9955022488756"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="dYB-yz-HWk">
+            <objects>
+                <viewController id="uGo-ad-Erv" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="eI4-IL-VJb"/>
+                        <viewControllerLayoutGuide type="bottom" id="g1q-Rg-mBg"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="x8s-at-XCT">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Example" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x7Z-3m-0FC">
+                                <frame key="frameInset" minX="155" minY="314" width="65" height="38"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Cx8-8X-3jf"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Iqz-Ly-iqi" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2308" y="1046.6266866566718"/>
+        </scene>
+        <!--Tab Bar Controller-->
+        <scene sceneID="LnS-b8-LCB">
+            <objects>
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="Qwp-Gv-0HU" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <tabBar key="tabBar" contentMode="scaleToFill" id="cO8-aq-FQh">
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </tabBar>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="viewControllers" id="1Fd-yh-uSI"/>
+                        <segue destination="zNn-bs-uRO" kind="relationship" relationship="viewControllers" id="fqN-fY-heP"/>
+                    </connections>
+                </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="maq-vY-aa3" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="276" y="600"/>
+        </scene>
+        <!--Other-->
+        <scene sceneID="PjF-sg-nHw">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="zNn-bs-uRO" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Other" image="Rain" id="YFK-FV-JaS"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="mLp-wB-zp7">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="uGo-ad-Erv" kind="relationship" relationship="rootViewController" id="Jc8-LI-7r7"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="1kf-XU-GCQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1368.8" y="1046.6266866566718"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="Map Pin" width="24" height="24"/>
+        <image name="Rain" width="25" height="25"/>
+    </resources>
+</document>
